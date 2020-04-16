@@ -1,0 +1,74 @@
+import sqlite3
+import json
+from flask import g
+
+#  Databases needed to run this program
+DATABASE = '/home/pi/nurse/db/nurse.db'
+# ANSWERS_DATABASE = '/home/pu/nurse/db/answers.db'
+
+
+# def get_db_answers():
+#    answer = getattr(g, '_database', None)
+#    if answer is None:
+#        answer = g._database = sqlite3.connect(answers_db)
+#    return answer
+
+
+def get_db():
+    exam_db = getattr(g, '_database', None)
+    if exam_db is None:
+        exam_db = g._database = sqlite3.connect(DATABASE)
+    return exam_db
+
+
+def query_db(query, args=(), one=False):
+    cur = get_db().execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
+
+
+# for user in query_db('select * from users'):
+#     print user['username'], 'has the id', user['user_id']
+
+
+def all_sensors():
+    for sensor
+    return True
+
+
+def sensor_exists(card):
+    accessID = query_db('select * from examsensor where accessID = ?;',
+                        [card], one=True)
+    if accessID is None:
+        return 'No such user'
+    else:
+        return accessID, 'exists in db', accessID['name']
+
+
+def get_available_exams():
+    exams = query_db('select * from exams where is_active = 1;')
+    return exams
+
+
+def get_exam_info(exam):
+    exam_info = query_db('select * from exams where exam_id = ?;',
+                         [exam])
+
+    if exam_info is None or exam_info['is_active'] is 0:
+        return 'Sorry, that exam is not active or doesn\'t exists.'
+    else:
+        return exam_info
+
+
+def exam_get_questions(exam):
+    e = query_db('select * from examquestions where examID = ?;',
+                 [exam], one=False)
+    return e
+
+
+
+# def close_connection(exception):
+#    db = getattr(g, '_database', None)
+#    if db is not None:
+#        db.close()

@@ -1,0 +1,50 @@
+{% extends "global.html" %}
+{% block title %}
+    Select Exams
+{% endblock %}
+
+
+{% block styles %}{% endblock %}
+
+
+{% block script %}
+{% endblock %}
+
+
+{% block content %}
+<div class="lang">
+    Choose Exam
+</div>
+<div class="container">
+    <form method="POST">
+        <fieldset>
+            <legend>Select exam name</legend>
+
+            <div class="row">
+                <div class="div1"></div>
+                <div class="div2"></div>
+            </div>
+            {% for q in question %}
+                <div class="row-inner">
+                    {% if q[6]== 1 %}<b>{% endif %}{{ q[3] }}{% if q[6]== 1 %}</b>{% endif %}
+                    <div style="">
+                        <input type="radio"
+                               name="{{ q[0] }}"
+                               id="exam_{{ q[1] }}_q_{{ q[0] }}_a_1"
+                               value="1" />
+                        <label for="exam_{{ q[1] }}_q_{{ q[0] }}_a_1">Yes</label>
+                    </div><div style="">
+                        <input type="radio"
+                               name="{{ q[0] }}"
+                               id="exam_{{ q[1] }}_q_{{ q[0] }}_a_0"
+                               value="0" />
+                        <label for="exam_{{ q[1] }}_q_{{ q[0] }}_a_0">No</label>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </fieldset>
+        <input type="submit" value="submit">
+    </form>
+</div>
+{% endblock %}

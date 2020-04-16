@@ -1,0 +1,56 @@
+{% extends "global.html" %}
+{% block title %}
+    {{ exam[1] }}
+{% endblock %}
+
+
+{% block styles %}
+{% endblock %}
+
+
+{% block script %}
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="lang">
+        <h1>Chosen Exam</h1>
+    </div>
+    <div class="container">
+
+       <div class="row">
+            <div class="title">{{ exam[1] }}</div>
+            <div class="description">
+                <ul class="desc">
+                    {% for x in desc %}
+                        <li>{{ x }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+       </div>
+
+        <div class="row-inner">
+            {{ exam[3] }}
+        </div>
+        <div class="outfit">
+            <b>Outfit:</b> {{ exam[4] }}
+        </div>
+        <div class="time">
+            <b>Max allowed time:</b> {{ exam[5] }} minutes.
+        </div>
+        <div class="min_corr">
+            <b>Minimum Correct to pass:</b> {{ exam[8] }}
+        </div>
+    </div>
+    <div class="case">
+        <h2>Case</h2>
+        <div class="case_info">
+            {{ gender }} <br>
+            Alder: {{ case[2] }} <br>
+            Høyde: {{ case[3] }}cm <br>
+            Vekt: {{ case[4] }}kg <br>
+            ASA: {{ case[5] }}
+        </div>
+    </div>
+{% endblock %}

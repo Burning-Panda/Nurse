@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Please scan your card</title>
+    <link rel="stylesheet" type="text/css" href="../static/loader.css">
+</head>
+<body>
+
+<h1>Please scan your card</h1>
+<h3>Scan your card at the card reader placed at XXXXXX location</h3>
+
+<div class='loader loader1'>
+  <div>
+    <div>
+      <div>
+        <div>
+          <div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    var request = new XMLHttpRequest();
+    request.open('POST', '/with-sensor');
+
+    request.onload = function() {
+        if (request.status === 200 && request.responseText === 'done') {
+            // long process finished successfully, redirect user
+            window.location = '/choose_exam';
+        } else if (request.status ===406 && request.responseText === 'fail') {
+            window.location = '/';
+        } else {
+            // ops, we got an error from the server
+            alert('ops, we got an error from the server.');
+        }
+    };
+
+    request.onerror = function() {
+        // ops, we got an error trying to talk to the server
+        alert('ops, we got an error trying to talk to the server.');
+    };
+
+    request.send();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "global.html" %}
+{% block title %}
+    Select Exams
+{% endblock %}
+
+
+{% block styles %}
+{% endblock %}
+
+
+{% block script %}
+{% endblock %}
+
+
+{% block content %}
+<div class="lang">
+    Choose Exam
+</div>
+<div class="container">
+    <form method="POST">
+        <fieldset>
+            <legend>Select exam name</legend>
+
+            <div class="row">
+                <div class="div1"></div>
+                <div class="div2"></div>
+            </div>
+
+            {% for exam in exams %}
+                <div class="row-inner">
+                    <input type="radio" name="exams" id="exam_{{ exam[0] }}" value="{{ exam[0] }}" />
+                    <label for="exam_{{ exam[0] }}">{{ exam[1] }}</label>
+                </div>
+            {% endfor %}
+
+        </fieldset>
+        <input type="submit" value="submit">
+    </form>
+</div>
+
+    {% if sensor != 'None' %}
+        {{ sensor }}
+    {% endif %}
+{% endblock %}
