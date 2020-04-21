@@ -16,7 +16,7 @@
     Choose Exam
 </div>
 <div class="container">
-    <form method="POST">
+    <form method="POST" id="examQuestions">
         <fieldset>
             <legend>Select exam name</legend>
 
@@ -26,12 +26,18 @@
             </div>
             {% for q in question %}
                 <div class="row-inner">
-                    {% if q[6]== 1 %}<b>{% endif %}{{ q[3] }}{% if q[6]== 1 %}</b>{% endif %}
+                    {% if q[6] == 1 %}
+                        <b>{{ q[3] }}</b>
+                    {% else %}
+                        {{ q[3] }}
+                    {% endif %}
+
                     <div style="">
                         <input type="radio"
                                name="{{ q[0] }}"
                                id="exam_{{ q[1] }}_q_{{ q[0] }}_a_1"
-                               value="1" />
+                               value="1"
+                               required />
                         <label for="exam_{{ q[1] }}_q_{{ q[0] }}_a_1">Yes</label>
                     </div><div style="">
                         <input type="radio"

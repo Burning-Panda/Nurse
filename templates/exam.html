@@ -30,9 +30,6 @@
             </div>
        </div>
 
-        <div class="row-inner">
-            {{ exam[3] }}
-        </div>
         <div class="outfit">
             <b>Outfit:</b> {{ exam[4] }}
         </div>
@@ -52,5 +49,8 @@
             Vekt: {{ case[4] }}kg <br>
             ASA: {{ case[5] }}
         </div>
+        <p>
+            <a href="/exam/{{ exam_id }}/in-progress">Next</a>
+        </p>
     </div>
 {% endblock %}

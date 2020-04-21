@@ -1,3 +1,7 @@
+# Code fetched from "https://pimylifeup.com/raspberry-pi-rfid-rc522/"
+# Custom modification:
+#   Time function to stop this program after a certain amount of time has elapsed.
+
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 import time

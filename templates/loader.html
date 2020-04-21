@@ -25,13 +25,13 @@
 </div>
 
 <script>
-    var request = new XMLHttpRequest();
+    const request = new XMLHttpRequest();
     request.open('POST', '/with-sensor');
 
     request.onload = function() {
         if (request.status === 200 && request.responseText === 'done') {
             // long process finished successfully, redirect user
-            window.location = '/choose_exam';
+            window.location = '/exams';
         } else if (request.status ===406 && request.responseText === 'fail') {
             window.location = '/';
         } else {
