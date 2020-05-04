@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import urllib
+from urllib.request import urlopen
 import obspython as obs
 from time import sleep
 
@@ -10,9 +10,11 @@ url = "/obs-rec-status-change"
 
 
 def check_url():
-    file = urllib.request.urlopen(url)
+    file = urlopen(url)
+
+    u = None
     for line in file:
-        u = line.decode("utf-8")
+        u += line.decode("utf-8")
     return u
 
 

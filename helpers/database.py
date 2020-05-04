@@ -1,4 +1,3 @@
-# get_db() and query_db() fetched from Flask Documentation https://flask.palletsprojects.com/en/1.1.x/patterns/sqlite3/
 import sqlite3
 import json
 from flask import g
@@ -10,17 +9,10 @@ DATABASE = '/home/pi/nurse/db/nurse.db'
 
 # ANSWERSDB = '/db/answers.db'
 
-
-# def get_db_answers():
-#    answer = getattr(g, '_database', None)
-#    if answer is None:
-#        answer = g._database = sqlite3.connect(ANSWERSDB)
-#    return answer
-
-
 # ########################################################### #
 # #                   Database connections                  # #
 # ########################################################### #
+# get_db() and query_db() fetched from Flask Documentation https://flask.palletsprojects.com/en/1.1.x/patterns/sqlite3/
 def get_db():
     exam_db = getattr(g, '_database', None)
     if exam_db is None:
@@ -35,8 +27,16 @@ def query_db(query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 
+def insert_db(query, args=()):
+    cur = get_db().execute(query, args)
+    get_db().commit()
+    c = cur.lastrowid
+    cur.close()
+    return c
+
+
 # ########################################################### #
-# #                        Sensors                          # #
+# #                     Teacher/Sensors                     # #
 # ########################################################### #
 
 def sensors_list(x=None, i_a=False):
@@ -51,12 +51,12 @@ def sensors_list(x=None, i_a=False):
 
 
 def sensor_exists(card):
-    accessID = query_db('select * from examsensor where accessID = ?',
-                        [card], one=True)
-    if accessID is None:
+    access_id = query_db('select * from examsensor where accessID = ?',
+                         [card], one=True)
+    if access_id is None:
         return 'No such user'
     else:
-        return accessID, 'exists in db', accessID['name']
+        return access_id, 'exists in db', access_id['name']
 
 
 # ########################################################### #
@@ -77,8 +77,24 @@ def get_exam_info(exam):
         return exam_info
 
 
+# ########################################################### #
+# #                      Questions                          # #
+# ########################################################### #
+
 def exam_get_questions(exam):
     e = query_db('select * from examquestions where examID = ?',
+                 [exam], one=False)
+    return e
+
+
+def get_single_question(quid):
+    e = query_db('select important from examquestions where question_id = ?',
+                 [quid], one=True)
+    return e
+
+
+def exam_get_questions_required(exam):
+    e = query_db('select question_id, important from examquestions where examID = ?',
                  [exam], one=False)
     return e
 
@@ -95,32 +111,57 @@ def get_question_ids(exam):
     return ids
 
 
+def check_if_minimum_is_completed(exam, min_correct):
+    correct = query_db('SELECT min_correct FROM exams WHERE exam_id = ?',
+                       [exam], one=True)
+
+    c = int(correct[0])
+    e = int(min_correct)
+    if e >= c:
+        return '1'
+    else:
+        return '0'
+
+
 # ########################################################### #
 # #                         Results                         # #
 # ########################################################### #
 
-def get_result(x):
-    result = query_db('SELECT question_id FROM examquestions WHERE examID = ?',
-                      [x], one=False)
-    return result
+def get_results(result_id):
+    r = query_db('SELECT * FROM results WHERE res_id = ?',
+                 [result_id], one=True)
+    return r
 
 
-def insert_result(case_id, exam_id, answers, start_time, is_exam=None, sensor=None):
-    current_time = datetime.now()
-    time_used = current_time - start_time
+def only_questions(e):
+    r = query_db('SELECT question FROM examquestions WHERE examID = ?',
+                 [e], one=False )
+    return r
 
+
+def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor, json):
     now = datetime.now()
-    date = now.strftime("%Y-%m-%d")
+    time_used = str(now - start_time)
 
-    if sensor is None:
-        sensor = 0
-    if is_exam is None:
-        is_exam = 0
+    # Making sure everything is in the correct format before insert.
+    date = str(now.strftime("%Y-%m-%d"))
+    c = int(case_id)
+    e = int(exam_id)
+    a = str(answers)
+    gr = int(grade)
+    ie = int(is_exam)
+    se = str(sensor)
 
-    query_db('INSERT INTO results (case_id, date_completed, exam, answers, sensor, is_exam, time_used)'
-             'VALUES (?)',
-             [case_id, date, exam_id, answers, sensor, is_exam, time_used], one=True)
-    return True
+    stu = 0
+    comment = "Comments"
+
+    con = insert_db('INSERT INTO results'
+                    '(case_id, date_completed, exam_id, answers, sensor, is_exam, time_used, student, grade,'
+                    'comment, start_time, stop_time, json)'
+
+                    'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    [c, date, e, a, se, ie, time_used, stu, gr, comment, start_time, now, json])
+    return con
 
 
 def get_case(x):
@@ -132,6 +173,7 @@ def get_case(x):
 # ########################################################### #
 # #                      active exams                       # #
 # ########################################################### #
+
 def db_set_active_exam(e=None, r=None):
     if e is not None and r is not None:
         query_db('INSERT INTO active_exam (exam_id, start_time, room, recording) VALUES(?,?,?,?)',

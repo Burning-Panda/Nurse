@@ -40,23 +40,35 @@ CREATE TABLE examquestions (
     question text,
     q_description text,
     answers text,
-    important integer
+    important integer,
+    FOREIGN KEY (examID)
+        references exams (exam_id),
+    FOREIGN KEY (question_type)
+        references questiontype (qt_id)
     );
 CREATE TABLE results (
     res_id integer PRIMARY KEY,
     case_id integer,
     date_completed text,
-    exam integer,
+    exam_id integer,
     answers text,
     sensor text,
     is_exam integer,
     time_used text,
     student integer,
+    grade integer,
     comment text,
+    start_time text,
+    stop_time text,
+    json text,
+    FOREIGN KEY (exam_id)
+        references exams (exam_id),
+    FOREIGN KEY (case_id)
+        REFERENCES cases (case_id),
+    FOREIGN KEY (sensor)
+        REFERENCES examsensor (sensor_id),
     FOREIGN KEY (student)
         REFERENCES students (stu_id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
 );
 CREATE TABLE active_exam (
     ae_id integer PRIMARY KEY,
@@ -99,7 +111,7 @@ VALUES (
         'Oppkobling av sprøytepumpe med noradrenalin-infusjon',
         'Studenten skal blande ut en vasoaktiv infusjon, og koble opp og starte infusjonen på sprøytepumpe ut i fra en ordinasjon|Kan forklare indikasjon for oppstart av gitt infusjon',
         'Korrekt arbeidsantrekk',
-        15,
+        '00:15:00',
         datetime('now', 'localtime'),
         1,
         10);
@@ -232,14 +244,6 @@ VALUES (1,
         '',
         '1|0',
         0
-    ),
-    (
-        1,
-        3,
-        'Timeframe: 15 minutter',
-        '',
-        '1|0',
-        1
     );
 
 
@@ -252,7 +256,7 @@ VALUES (
         'OSCE, AIO MAN4000 Intubasjon',
         'Studenten skal forberede til intubasjon og gjennomføre et intubasjonsforsøk.|Intubatøren skal selv lytte og verifisere korrekt tubeleie","Øsofagusintubasjon aksepteres, men dette må oppdages og studenten må angi at  prosedyren avsluttes og maskeventilasjon gjenopptas.|Må forklare gangen i en innledning, men testes kun i forberedelse og  gjennomføring av selve intubasjonsprosedyren',
         'Korrekt arbeidsantrekk',
-        10,
+        '00:10:00',
         datetime('now', 'localtime'),
         1,
         8);
@@ -352,7 +356,7 @@ VALUES (
         'OSCE, Oppkobling TIVA-sett',
         'Studenten skal blande ut medikamenter (propofol/remifentanil og koble opp TIVA-sett og programmere pumpene i hht valgt medikament-protokoll|Studenten skal kunne forklare grunnbegreper ved TIVA/TCI (Cp, Cpt, Ce og Cet)',
         'Korrekt arbeidsantrekk',
-        15,
+        '00:15:00',
         datetime('now', 'localtime'),
         1,
         8);
@@ -432,7 +436,7 @@ VALUES (
         'OSCE, AIO MIN4000 /MAN4000 arteriekran  0-ing og blodprøvetaking',
         'Kaliberering av arteriekran til atmosfærisk trykk","Blodprøvetaking fra arteriekran|Kan forklare hvordan koblinger håndteres korrekt ved daglig bruk',
         'Korrekt arbeidsantrekk',
-        15,
+        '00:15:00',
         datetime('now', 'localtime'),
         1,
         13);

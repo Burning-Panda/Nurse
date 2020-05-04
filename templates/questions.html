@@ -33,18 +33,20 @@
                     {% endif %}
 
                     <div style="">
-                        <input type="radio"
-                               name="{{ q[0] }}"
-                               id="exam_{{ q[1] }}_q_{{ q[0] }}_a_1"
-                               value="1"
-                               required />
-                        <label for="exam_{{ q[1] }}_q_{{ q[0] }}_a_1">Yes</label>
-                    </div><div style="">
-                        <input type="radio"
-                               name="{{ q[0] }}"
-                               id="exam_{{ q[1] }}_q_{{ q[0] }}_a_0"
-                               value="0" />
-                        <label for="exam_{{ q[1] }}_q_{{ q[0] }}_a_0">No</label>
+                        <label for="{{ q[0] }}">
+                        <p>
+                            <input type="checkbox"
+                                   name="{{ q[0] }}"
+                                   id="exam_{{ q[1] }}_q_{{ q[0] }}_a_1"
+                                   class="checkbox {{ q[0] }}"
+                                   value="1" checked
+                                   style="width: 2rem;height: 2rem;"/>
+                            <input type="hidden"
+                                   name="{{ q[0] }}"
+                                   value="0" />
+
+                        </p>
+                            </label>
                     </div>
                 </div>
             {% endfor %}

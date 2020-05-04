@@ -1,4 +1,5 @@
 from flask import session
+import json
 
 
 #  Language option.
@@ -11,7 +12,10 @@ from flask import session
 lang_en = '{ "no_user":"No such user",' \
           '"no_exam":"Sorry, that exam is not active or doesn\'t exists",' \
           '"":""}'
-lang_no = ''
+lang_no = '{"no_user":"Finner ingen bruker",' \
+          '"no_exam":"Den eksamen er ikke aktiv eller finnes ikke",' \
+          '"grade_f":"Ikke bestått"' \
+          '"grade_p":"Bestått"}'
 
 lang = None
 

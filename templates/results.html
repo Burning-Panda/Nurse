@@ -1,6 +1,6 @@
 {% extends "global.html" %}
 {% block title %}
-    Select Exams
+    Result
 {% endblock %}
 
 
@@ -69,13 +69,36 @@
 
 
 {% block content %}
+    <a href="/">GO BACK</a>
 <div class="lang">
     Result
+<h1>{{ r[9] }}</h1>
+{{ r }}<br>
+<h2>{{ grade }}</h2>
 </div>
 <div class="container">
-Exam:{{ e }} questions: {{ q }}
-{{ data }}
 
+    <p>
+    <b>Info to the stud</b>
+        {% for i in exam_info %}
+            {{ i }}<br>
+        {% endfor %}
+    </p>
+    <p>
+    <b>Questions</b>
+        {% for a,i in p %}
+            {% if a[6] == 1 %}
+                <b>{{ a[3] }}:</b> {{ i }}
+                <br>
+            {% else %}
+                {{ a[3] }}:  {{ i }}
+                <br>
+            {% endif %}
+        {% endfor %}
+    </p>
+<p>
+    {{ results[3] }}
+</p>
 
 
     <table class="tg" style="table-layout: fixed; width: 988px">

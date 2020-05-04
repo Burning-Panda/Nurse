@@ -1,6 +1,7 @@
 # Code fetched from "https://pimylifeup.com/raspberry-pi-rfid-rc522/"
 # Custom modification:
 #   Time function to stop this program after a certain amount of time has elapsed.
+#   This is done to prevent and overloading the server (pi).
 
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
@@ -10,8 +11,7 @@ reading = SimpleMFRC522()
 
 
 def read():
-    # id, text = None
-    id = None
+    id, text = None
     start_time = time.time()
 
     try:

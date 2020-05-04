@@ -1,0 +1,5 @@
+pyzmq~=19.0.0
+Flask~=1.1.2
+mfrc522~=0.0.7
+requests~=2.23.0
+setuptools~=40.8.0
