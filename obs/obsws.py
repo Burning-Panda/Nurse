@@ -3,6 +3,8 @@ import asyncio
 from obswsrc import OBSWS
 from obswsrc.requests import ResponseStatus, StartRecordingRequest, StopRecordingRequest
 
+loop = asyncio.get_event_loop()
+
 
 async def main(x, w, p, c):
     server = str(x)
@@ -22,12 +24,11 @@ async def main(x, w, p, c):
 
         # Check if everything is OK
         if response.status == ResponseStatus.OK:
-            return "Recording has started"
+            return "Everything was done correctly"
         else:
-            return "Couldn't start the recording! Reason:", response.error
+            return "Error with the program! Reason:", response.error
 
 
 def obs_connector(server, wall, password, command):
-    loop = asyncio.get_event_loop()
     loop.run_until_complete(main(server, wall, password, command))
     return True

@@ -100,6 +100,8 @@ def tasks(exam):
     :return: On post, redirects the user to the results page.
     """
     q = exam_get_questions(exam)
+    get_room = session.get('room')
+
     if request.method == "POST":
         form_data = request.form
 
@@ -162,12 +164,14 @@ def tasks(exam):
         # Inserts result and returns the last inserted ID for the redirection to the next page.
         ins = insert_result(case_id, exam, answers, st_time, text_grade, ie, active_sensor, dump)
 
+        obs_status_change(get_room, 'stop')
         return redirect(url_for('results', result_id=ins))
         # return render_template('results.html', e=exam, q=e, data=answers, count=count, c=min_correct, i=ins)
 
     else:
         # Saves the time locally on the browser and renders the exam questions template.
         # Time is used for validation and results
+        obs_status_change(get_room, 'start')
         session['start_time'] = datetime.now()
         return render_template('questions.html', question=q, exam=exam)
 
@@ -233,6 +237,7 @@ def results(result_id):
      or if there was no nothing read for 4 minutes, sends reset code to the requesting website.
 """
 
+
 @app.route('/scan/sensor', methods=['GET', 'POST'])
 def sensor_login():
     if request.method == 'GET':
@@ -284,26 +289,13 @@ def student_login():
 # #                  ONLY FOR OBS STUDIO!                   # #
 # ########################################################### #
 
-@app.route('/obs/<room_id>/start', methods=['GET'])
-def obs_status_change_start(room_id):
-    command = 'start'
+def obs_status_change(room_id, command):
     room = get_room_info(room_id)
     ip = str(room[3])
     firewall = int(room[4])
     password = str(room[5])
     obs_connector(ip, firewall, password, command)
-    return f'Start'
-
-
-@app.route('/obs/<room_id>/stop', methods=['GET'])
-def obs_status_change_stop(room_id):
-    command = 'stop'
-    room = get_room_info(room_id)
-    ip = str(room[3])
-    firewall = int(room[4])
-    password = str(room[5])
-    obs_connector(ip, firewall, password, command)
-    return f'Stop'
+    return True
 
 
 # TODO

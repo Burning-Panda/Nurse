@@ -135,7 +135,7 @@ def get_results(result_id):
 
 def only_questions(e):
     r = query_db('SELECT question FROM examquestions WHERE examID = ?',
-                 [e], one=False )
+                 [e], one=False)
     return r
 
 
@@ -242,7 +242,7 @@ def add_new_room(room_name, room, ip, firewall, password):
 
 def get_room_info(room_id):
     q = query_db('SELECT * FROM rooms WHERE room = ?',
-             [room_id], one=True)
+                 [room_id], one=True)
     return q
 
 
