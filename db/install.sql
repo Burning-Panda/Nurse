@@ -87,6 +87,23 @@ CREATE TABLE students (
     exams_failed integer,
     practice_exams_done integer
 );
+CREATE TABLE rooms(
+    server_id integer PRIMARY KEY,
+    roomName text,
+    room integer,
+    ip text,
+    firewall integer,
+    password text
+);
+
+INSERT INTO rooms(roomName, room, ip, firewall, password)
+VALUES("testRoom",
+       1,
+       "192.168.1.226",
+       4444,
+       "MYSecurePassword"
+);
+
 
 INSERT INTO questiontype(qtype)
 VALUES('Forberedelse'),

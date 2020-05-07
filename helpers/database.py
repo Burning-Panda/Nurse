@@ -227,6 +227,26 @@ def update_active_exam_waiting(room):
 
 
 # ########################################################### #
+# #                       OBS ROOMS                         # #
+# ########################################################### #
+def obs_rooms_available():
+    q = query_db('SELECT * FROM rooms')
+    return q
+
+
+def add_new_room(room_name, room, ip, firewall, password):
+    query_db('INSERT INTO roomName, room, ip, firewall, password) VALUES (?)',
+             [room_name, room, ip, firewall, password], one=True)
+    return True
+
+
+def get_room_info(room_id):
+    q = query_db('SELECT * FROM rooms WHERE room = ?',
+             [room_id], one=True)
+    return q
+
+
+# ########################################################### #
 # #                       Exceptions                        # #
 # ########################################################### #
 

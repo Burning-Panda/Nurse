@@ -7,6 +7,7 @@ import json
 # Import from helper files
 from helpers.database import *
 from helpers.reader import read
+from obs.obsws import obs_connector
 from helpers.pdf import render
 
 # ########################################################### #
@@ -283,29 +284,26 @@ def student_login():
 # #                  ONLY FOR OBS STUDIO!                   # #
 # ########################################################### #
 
-@app.route('/obs-rec-status-change/<room>')
-def obs_status_change(room):
-    # TODO: Check return codes
-    #   make sure OBS can read them
+@app.route('/obs/<room_id>/start', methods=['GET'])
+def obs_status_change_start(room_id):
+    command = 'start'
+    room = get_room_info(room_id)
+    ip = str(room[3])
+    firewall = int(room[4])
+    password = str(room[5])
+    obs_connector(ip, firewall, password, command)
+    return f'Start'
 
-    """
-    possible return codes:
-    start, stop, Waiting
-    :return: code for the obs to read.
-    """
 
-    active = get_active_exam(room)
-
-    if active is not None or active[4] is not 2:
-        if active[4] is 1:
-            update_active_exam_waiting(room)
-            return f"start"
-        else:
-            return f"stop"
-    else:
-        # as long as recording status is 2 or none, it will display this.
-        # OBS will not do anything as long as this is shown
-        return f"waiting"
+@app.route('/obs/<room_id>/stop', methods=['GET'])
+def obs_status_change_stop(room_id):
+    command = 'stop'
+    room = get_room_info(room_id)
+    ip = str(room[3])
+    firewall = int(room[4])
+    password = str(room[5])
+    obs_connector(ip, firewall, password, command)
+    return f'Stop'
 
 
 # TODO
