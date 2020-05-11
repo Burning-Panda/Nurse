@@ -20,14 +20,6 @@ CREATE TABLE cases (
     asa text
     );
 
-CREATE TABLE examsensor (
-    sensor_id integer PRIMARY KEY,
-    accessID text NOT NULL UNIQUE,
-    firstName text NOT NULL,
-    lastName text NOT NULL,
-    isActive integer
-    );
-
 CREATE TABLE questiontype (
     qt_id integer PRIMARY KEY,
     qtype text
@@ -65,10 +57,8 @@ CREATE TABLE results (
         references exams (exam_id),
     FOREIGN KEY (case_id)
         REFERENCES cases (case_id),
-    FOREIGN KEY (sensor)
-        REFERENCES examsensor (sensor_id),
     FOREIGN KEY (student)
-        REFERENCES students (stu_id)
+        REFERENCES users (user_id)
 );
 CREATE TABLE active_exam (
     ae_id integer PRIMARY KEY,
@@ -76,8 +66,9 @@ CREATE TABLE active_exam (
     start_time text,
     room integer
 );
-CREATE TABLE students (
-    stu_id integer PRIMARY KEY,
+
+CREATE TABLE users (
+    user_id integer PRIMARY KEY,
     card_number TEXT,
     first_name TEXT,
     last_name TEXT,
@@ -85,8 +76,19 @@ CREATE TABLE students (
     exams_taken integer,
     exams_finished integer,
     exams_failed integer,
-    practice_exams_done integer
+    practice_exams_done integer,
+    isActive integer,
+    userType integer,
+    password text
 );
+CREATE TABLE userTypes(
+    id integer PRIMARY KEY,
+    name text,
+    access integer,
+    FOREIGN KEY (id)
+        REFERENCES users (userType)
+);
+
 CREATE TABLE rooms(
     server_id integer PRIMARY KEY,
     roomName text,
@@ -96,6 +98,7 @@ CREATE TABLE rooms(
     password text
 );
 
+
 INSERT INTO rooms(roomName, room, ip, firewall, password)
 VALUES("testRoom",
        1,
@@ -104,23 +107,11 @@ VALUES("testRoom",
        "MYSecurePassword"
 );
 
-
 INSERT INTO questiontype(qtype)
 VALUES('Forberedelse'),
       ('Gjennomføring'),
       ('Etterarbeid');
 
-/*
-#   Adding new users. accessID is text type.
-#   This is because ID cards contains its own unique ID.
- */
-INSERT INTO examsensor(accessID,firstName,lastName,isActive)
-VALUES (
-        0000000,
-        'Admin',
-        'Istrator',
-        1
-        );
 
 INSERT INTO exams (shortname, testdescription, info, outfit, max_time, dateadded, is_active, min_correct)
 VALUES (

@@ -52,6 +52,8 @@ def splash():
 
 @app.route('/exams', methods=['POST', 'GET'])
 def choose_exam():
+    # TODO:
+    #   * Waiting for Chris / Kay
     """
     Gets the website for all exams, checks database for what exams is available.
     if :Method GET:  Gets the website and loads exams from the database.
@@ -73,7 +75,9 @@ def choose_exam():
 
 @app.route('/exam/<int:exam_id>')
 def exam_choice(exam_id):
-    # TODO: Add random case generator.
+    # TODO:
+    #   * Add random case generator.
+    #   * Wait for Chris / Kay
     """
     :param exam_id: get the exam ID
     :return: the website for a single exam.
@@ -179,8 +183,7 @@ def tasks(exam):
 @app.route('/results/<result_id>/comment')
 def comment(result_id):
     # TODO:
-    #  * Make the insert function to insert the comment into the right result
-    #  * Render the template.
+    #  * Wait for correct template from Chris / Kay
     """
     Comments will be written here.
     Comment is stored related to one specific student.
@@ -240,6 +243,8 @@ def results(result_id):
 
 @app.route('/scan/sensor', methods=['GET', 'POST'])
 def sensor_login():
+    # TODO:
+    #    * Check why scanning doesn't work...
     if request.method == 'GET':
         return render_template('loader.html')
 
@@ -255,7 +260,7 @@ def sensor_login():
             flash('You did not scan your card in time.')
             return Response("fail", status=406, mimetype='application/json')
 
-        session['sensor'] = sensor
+        session['sensor'] = sensor[0]
         # Afterwards, returns a message to the ajax script on the website, telling it to continue.
         flash('Your card was scanned successfully!')
         return Response("done", status=200, mimetype='application/json')
@@ -414,21 +419,6 @@ def not_found():
     #  Status: Does not work!!!!
     """Page not found."""
     return make_response(render_template("404.html"), 404)
-
-
-def test(work):
-    server = "tct://192.168.1.78:5555"
-    context = zmq.Context()
-
-    # Connect to OBS (server).
-    socket = context.socket(zmq.REQ)
-    socket.connect(server)
-
-    socket.send(b"status")
-    socket.send(work)
-    #  Get the reply.
-    message = socket.recv()
-    return message
 
 
 # Starts the app on local network.

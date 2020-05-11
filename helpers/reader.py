@@ -11,7 +11,7 @@ reading = SimpleMFRC522()
 
 
 def read():
-    id, text = None
+    id = None
     start_time = time.time()
 
     try:
@@ -21,7 +21,6 @@ def read():
             if et > 240:
                 id = False
                 break
-            # id, text = reader.read()
             id = reading.read()
             break
     finally:

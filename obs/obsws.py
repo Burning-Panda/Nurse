@@ -7,6 +7,7 @@ loop = asyncio.get_event_loop()
 
 
 async def main(x, w, p, c):
+    # Making sure everything is formatted correctly after being sent from the main program to this
     server = str(x)
     wall = int(w)
     password = str(p)
