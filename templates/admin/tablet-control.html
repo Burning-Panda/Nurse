@@ -1,0 +1,48 @@
+<!-- Lisens ligger i folderen Lisens > ADMIN_PANEL -->
+{% extends "template.html" %}
+
+{% block title %}
+    Admin > Home
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="breadcrumb">
+        <h1>Tablet kontroller</h1>
+    </div>
+    <div class="separator-breadcrumb border-top"></div>
+    <p>
+        Denne siden skal bare brukes hvis du er på en iPad eller lignende. Dette er for å sette den opp til å kunne starte programmet riktig.
+    </p>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <fieldset>
+                            <legend>Pick a room:</legend>
+                            <div class="text-16">
+                                <label class="radio radio-success">
+                                    <input type="radio" name="radio" value="2">
+                                    <span>Success</span><span class="checkmark"></span>
+                                </label>
+                                <label class="radio radio-success">
+                                    <input type="radio" name="radio" value="2">
+                                    <span>Success</span><span class="checkmark"></span>
+                                </label>
+                                <label class="radio radio-success">
+                                    <input type="radio" name="radio" value="2">
+                                    <span>Success</span><span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <button class="btn btn-dark ripple m-1 float-right" type="submit">Lagre</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of row-->
+    <!-- end of main-content -->
+</div>
+{% endblock %}

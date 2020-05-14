@@ -74,12 +74,14 @@ CREATE TABLE users (
     last_name TEXT,
     student_mail TEXT,
     exams_taken integer,
-    exams_finished integer,
+    exams_passed integer,
     exams_failed integer,
     practice_exams_done integer,
     isActive integer,
     userType integer,
-    password text
+    password text,
+    FOREIGN KEY (userType)
+        REFERENCES userTypes (id)
 );
 CREATE TABLE userTypes(
     id integer PRIMARY KEY,
@@ -96,6 +98,14 @@ CREATE TABLE rooms(
     ip text,
     firewall integer,
     password text
+);
+
+CREATE TABLE serverStatus(
+    id integer PRIMARY KEY,
+    CPU text,
+    RAM text,
+    DISKS text,
+    NETWORK text
 );
 
 

@@ -1,0 +1,109 @@
+{% extends "template.html" %}
+
+{% block title %}
+    Admin > Home
+{% endblock %}
+
+{% block content %}
+        <div class="main-content">
+            <div class="breadcrumb">
+                <h1 class="mr-2">Version 1</h1>
+                <ul>
+                    <li><a href="">Dashboard</a></li>
+                    <li>Version 1</li>
+                </ul>
+            </div>
+            <div class="separator-breadcrumb border-top"></div>
+            <div class="row">
+                <!-- ICON BG-->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                        <div class="card-body text-center"><i class="i-Notepad"></i>
+                            <div class="content">
+                                <p class="text-muted mt-2 mb-0">Tester gjennomført på 30 dager</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">205</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                        <div class="card-body text-center"><i class="i-Open-Book"></i>
+                            <div class="content">
+                                <p class="text-muted mt-2 mb-0">Tester gjennomført i dag</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">$4021</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                        <div class="card-body text-center"><i class="i-Yes"></i>
+                            <div class="content">
+                                <p class="text-muted mt-2 mb-0">Beståtte øvinger</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">80</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                        <div class="card-body text-center"><i class="i-Diploma"></i>
+                            <div class="content">
+                                <p class="text-muted mt-2 mb-0">Alle tester gjennomført</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">$1200</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-sm-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="card-title">Måndelig bruk av elever i forskjellige år</div>
+                            <div id="echartPie" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-body p-0">
+                            <h5 class="card-title m-0 p-3">Siste 30 dagene med tester gjennomført</h5>
+                            <div id="echart3" style="height: 360px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="card mb-4">
+                        <div class="card-body p-0">
+                            <div class="card-title border-bottom d-flex align-items-center m-0 p-3"><span>Server status</span><span class="flex-grow-1"></span><span class="badge badge-pill badge-warning">Oppdatert hver time</span></div>
+                            <div class="d-flex border-bottom justify-content-between p-3">
+                                <div class="flex-grow-1"><span class="text-small text-muted">CPU</span>
+                                    <h5 class="m-0">2065</h5>
+                                </div>
+                                <div class="flex-grow-1"><span class="text-small text-muted">RAM</span>
+                                    <h5 class="m-0">465</h5>
+                                </div>
+                                <div class="flex-grow-1"><span class="text-small text-muted">Memory</span>
+                                    <h5 class="m-0">23456/500000mb</h5>
+                                </div>
+                                <div class="flex-grow-1"><span class="text-small text-muted">XX</span>
+                                    <h5 class="m-0">32165</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end of main-content -->
+        </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static/admin/js/plugins', filename='echarts.min.js') }}"></script>
+    <script src="{{ url_for('static/admin/js/scripts', filename='echart.options.min.js') }}"></script>
+
+    <script src="{{ url_for('static/admin/js/scripts', filename='dashboard.js') }}"></script>
+
+{% endblock %}

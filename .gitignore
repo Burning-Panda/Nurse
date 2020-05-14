@@ -1,2 +1,10 @@
 
 *.pyc
+.idea/deployment.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/Nurse.iml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/remote-mappings.xml

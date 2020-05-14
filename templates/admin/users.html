@@ -1,0 +1,168 @@
+{% extends "template.html" %}
+
+{% block title %}
+    Admin > Users
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="breadcrumb">
+        <h1>Users</h1>
+        <ul>
+            <li><a href="">Users</a></li>
+            <li>List</li>
+        </ul>
+    </div>
+    <div class="separator-breadcrumb border-top"></div>
+    <div class="row mb-4">
+        <div class="col-sm-12 col-md-7 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-4 mt-2 float-left">Students </h4>
+                    <button class="btn btn-outline-success mt-0 mb-4 float-right" type="button">Ny student</button>
+                    <div class="table-responsive border-top pt-2">
+                        <table class="display table table-striped table-bordered dataTable" id="stud_table" style="width:100%" role="grid">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Card ID</th>
+                                <th scope="col">Exams Completed</th>
+                                <th scope="col">Last exam completed</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>Lars Larson</td>
+                                <td>0000000000</td>
+                                <td>30</td>
+                                <td>Exam Name</td>
+                                <td><span class="badge badge-success">Enabled</span></td>
+                                <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>Per Person</td>
+                                <td>1111111111</td>
+                                <td>300</td>
+                                <td>Exam Name</td>
+                                <td><span class="badge badge-danger r-badge">Disabled</span></td>
+                                <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-success mr-2" href="#"><i class="nav-icon i-Yes font-weight-bold"></i></a></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>Watson Watch</td>
+                                <td>222222222</td>
+                                <td>49</td>
+                                <td>Exam Name</td>
+                                <td><span class="badge badge-danger r-badge">Disabled</span></td>
+                                <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+        <div class="col-sm-12 col-md-5 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 mt-2 float-left">Teachers </h4>
+                    <button class="btn btn-outline-success mt-0 mb-3 float-right" type="button"><i class="i-Add text-16"></i> Ny lærer</button>
+                    <div class="table-responsive border-top pt-2">
+                        <div id="" class="dataTables_wrapper container-fluid dt-bootstrap4">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table class="display table table-striped table-bordered dataTable" id="teach_table" style="width:100%" role="grid">
+                                        <thead>
+                                        <tr role="row">
+                                            <th scope="col">#</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Card ID</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>Lars Larson</td>
+                                            <td>0000000000</td>
+                                            <td><span class="badge badge-success">Enabled</span></td>
+                                            <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">2</th>
+                                            <td>Per Person</td>
+                                            <td>1111111111</td>
+                                            <td><span class="badge badge-danger r-badge">Disabled</span></td>
+                                            <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">3</th>
+                                            <td>Watson Watch</td>
+                                            <td>222222222</td>
+                                            <td><span class="badge badge-danger r-badge">Disabled</span></td>
+                                            <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Card ID</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- end of row-->
+    <!-- end of main-content -->
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static/admin/js/plugins', filename='datatables.min.js') }}"></script>
+    <script src="{{ url_for('static/admin/js/scripts', filename='datatables.script.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#teach_table').DataTable({
+                "paging": true,
+                "ordering": false,
+                "info": false
+            }); // ordering or sorting
+
+            $('#stud_table').DataTable({
+                "paging": true,
+                "ordering": false,
+                "info": false
+            }); // ordering or sorting
+        });
+    </script>
+{% endblock %}
+
+
+{% block endstyles %}
+    <style type="text/css">
+        .dataTables_filter {
+            text-align: right;
+        }
+    </style>
+{% endblock %}
+
+</body>
+
+</html>

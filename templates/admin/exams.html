@@ -1,0 +1,123 @@
+{% extends "template.html" %}
+
+{% block title %}
+    Admin > Exams
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <div class="row mb-3">
+            <div class="breadcrumb col-md-8 pt-3">
+                <h1>Exams</h1>
+            </div>
+            <div class="col-md-4 text-right">
+                <a href="view-exam.html" class="btn btn-outline-success text-17" type="button"><i class="i-Add text-16 m-1"></i> Add new</a>
+            </div>
+        </div>
+        <div class="separator-breadcrumb border-top"></div>
+        <!-- end of row-->
+        <div class="row mb-4">
+            <div class="col-md-12 mb-4">
+                <div class="card text-left">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Active exams</h4>
+                        <p>Eksamene i denne listen er aktivert og kan velges i listen over eksamener på iPadden. Når en eksamen deaktiveres, legges den i listen under.</p>
+                        <div class="table-responsive">
+                            <table class="display table table-striped table-bordered" id="zero_configuration_table" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Time allowed</th>
+                                    <th>Date added</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><b>1</b></td>
+                                    <td>OSCE Vasoaktiv infusjon</td>
+                                    <td>15 min</td>
+                                    <td>2011/04/25</td>
+                                    <td>Aktivert</td>
+                                    <td>
+                                        <a class="text-success mr-2" href="view-exam.html"><i class="nav-icon i-Pen-2 font-weight-bold"></i><b style="margin-right:20px;"> REDIGER</b></a>
+                                        <a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i><b> DEAKTIVER</b></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Time allowed</th>
+                                    <th>Date added</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="card text-left">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Deaktiverte eksamener</h4>
+                        <p>Eksamene i denne listen er deaktivert og kan ikke gjennomføres på iPadden. Når en eksamen aktiveres, vil den legges i listen over.</p>
+                        <div class="table-responsive">
+                            <table class="display table table-striped table-bordered" id="zero_configuration_table2" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Time allowed</th>
+                                    <th>Date added</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><b>1</b></td>
+                                    <td>OSCE Vasoaktiv infusjon</td>
+                                    <td>15 min</td>
+                                    <td>2011/04/25</td>
+                                    <td>Deaktivert</td>
+                                    <td>
+                                        <a class="text-success mr-2" href="view-exam.html"><i class="nav-icon i-Pen-2 font-weight-bold"></i><b style="margin-right:20px;"> REDIGER</b></a>
+                                        <a class="text-success mr-2" href="#"><i class="nav-icon i-Yes font-weight-bold"></i><b> AKTIVER</b></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Time allowed</th>
+                                    <th>Date added</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- end of col-->
+        </div>
+        <!-- end of row-->
+        <!-- end of main-content -->
+    </div>
+
+
+{% endblock %}
+{% block script %}
+    <script src="{{ url_for('static/admin/js/plugins', filename='datatables.min.js') }}"></script>
+    <script src="{{ url_for('static/admin/js/scripts', filename='datatables.script.min.js') }}"></script>
+{% endblock %}

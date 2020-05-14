@@ -1,0 +1,89 @@
+{% extends "template.html" %}
+
+{% block title %}
+    Admin > Answers
+{% endblock %}
+
+{% block content %}
+        <div class="main-content">
+            <div class="breadcrumb">
+                <h1>Resultat</h1>
+            </div>
+            <div class="separator-breadcrumb border-top"></div>
+            <!-- end of row-->
+            <div class="row mb-4">
+                <div class="col-md-12 mb-4">
+                    <div class="card text-left">
+                        <div class="card-body">
+                            <p>
+                                res_id integer PRIMARY KEY
+                            </p>
+                            <div class="table-responsive">
+                                <table class="display table table-striped table-bordered text-center" id="zero_configuration_table" style="width:100%">
+                                    <thead>
+
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Exam</th>
+                                        <th>Time Used</th>
+                                        <th>Student ID</th>
+                                        <th>Grade</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Exam</th>
+                                        <th>Time Used</th>
+                                        <th>Student ID</th>
+                                        <th>Grade</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end of col-->
+            </div>
+            <!-- end of row-->
+            <!-- end of main-content -->
+        </div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    function addTestData(i,randomItem) {
+        $("#zero_configuration_table tbody").append(
+            '<tr>' +
+            '<th>' + i + '</th>' +
+            '<td>OSCE Vasoaktiv infusjon</td>' +
+            '<td>15 min</td>' +
+            '<td>' + i + i + i + i + i + i +  i + i + i + i + i + '</td>' +
+            '<td>'+ randomItem +'</td>' +
+            '<th><a href="view-answer.html">2011/04/25</a></th>'
+        );
+    };
+    $(document).ready(function () {
+        const myArray = ['<span class="badge badge-pill badge-success p-2 m-1">Passed</span>','<span class="badge badge-pill badge-danger p-2 m-1">Failed</span>']
+        let i;
+        for (i = 0; i < 30; i++) {
+            let randomItem = myArray[Math.floor(Math.random()*myArray.length)];
+            addTestData(i,randomItem);
+        }
+    });
+</script>
+
+
+    <script src="{{ url_for('static/admin/js/plugins', filename='datatables.min.js') }}"></script>
+    <script src="{{ url_for('static/admin/js/scripts', filename='datatables.script.min.js') }}"></script>
+{% endblock %}
+
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+{% extends "template.html" %}
+
+{% block title %}
+    Admin > Home
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <div class="breadcrumb">
+            <h1>Svar</h1>
+        </div>
+        <div class="separator-breadcrumb border-top"></div>
+        <!-- end of row-->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-4">
+                <div class="card text-left">
+                    <div class="card-body">
+                        <div class="row mb-5">
+                            <div class="col-md-8 col-auto mr-auto">
+                                <h3>Exam Title</h3>
+                                <p>Info tekst</p>
+                            </div>
+                            <div class="col-md-4 text-right col-auto" style="max-width:160px;">
+                                <div class="row align-items-end">
+                                    <table class="col small">
+                                        <tbody>
+                                            <tr><th>Student ID:</th><td>0000000</td></tr>
+                                            <tr><th>Result ID:</th><td>0000000</td></tr>
+                                            <tr><th>Date:</th><td>20/04/2020</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-hover" id="test_data">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Spørsmål</th>
+                                    <th>Svar</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>33</td>
+                                    <td>Kobler til sprøyter og fyller slanger, fyller infusjonssett med infusjonsvæske uten deponering av medikament i infusjonsslange</td>
+                                    <td><span class="badge badge-round badge-round-opacity-danger"><i class="i-Close text-15"></i></span></td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Spørsmål</th>
+                                    <th>Svar</th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="row mb-4 pt-4 border-top">
+                            <div class="col-md-4">
+                                <b>Sensor:</b> Navn Navnesen
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <span class="text-19 font-weight-bold">Bestått</span>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-8 border">
+                                comment text
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end of col-->
+        </div>
+    </div>
+{% endblock %}
+
+{% block endstyles %}
+<style>
+    .badge-rounded-custom {width:28px;height:28px;padding:0;padding-top: 0.1rem;}
+</style>
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static/admin/js/plugins', filename='datatables.min.js') }}"></script>
+    <script src="{{ url_for('static/admin/js/scripts', filename='datatables.script.min.js') }}"></script>
+<script>
+    function addTestData(i,randomItem) {
+        $("#test_data tbody").append(
+            '<tr>' +
+            '<th>'+ i +'</th>' +
+            '<td>Kobler til sprøyter og fyller slanger, fyller infusjonssett med infusjonsvæske uten deponering av medikament i infusjonsslange</td>' +
+            '<td><span class="badge badge-round badge-round-opacity-'+randomItem+' badge-rounded-custom"><i class="i-Yes text-20"></i></span></td>' +
+            '</tr>'
+        );
+    };
+    $(document).ready(function () {
+        const myArray = ['success','danger']
+        let i;
+        for (i = 0; i < 6; i++) {
+            let randomItem = myArray[Math.floor(Math.random()*myArray.length)];
+            addTestData(i,randomItem);
+        }
+    });
+</script>
+{% endblock %}
+
+</body>
+
+</html>

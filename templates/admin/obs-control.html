@@ -1,0 +1,141 @@
+{% extends "template.html" %}
+
+{% block title %}
+    Admin > Home
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <div class="breadcrumb">
+            <h1 class="mr-2">Version 1</h1>
+            <ul>
+                <li><a href="">Dashboard</a></li>
+                <li>Version 1</li>
+            </ul>
+        </div>
+        <div class="separator-breadcrumb border-top"></div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Legg til ny OBS PC</h4>
+                        <form class="needs-validation" novalidate="novalidate">
+                            <div class="form-row">
+                                <div class="col-md-9 mb-3">
+                                    <label for="validationName">Navn på rom</label>
+                                    <input class="form-control" id="validationName" type="text" placeholder="Room name" value="" required="required">
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationNumber">room</label>
+                                    <input class="form-control" id="validationNumber" type="number" placeholder="1" value="" required="required">
+                                    <div class="valid-feedback">
+                                        Looks good!
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-9 mb-3">
+                                    <label for="validationIP">IP</label>
+                                    <div class="input-group">
+                                        <input class="form-control" id="validationIP" type="text" placeholder="IP: 192.168.1.1" required="required">
+                                        <div class="invalid-feedback">
+                                            Please choose a IP.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationWall">Open Firewall</label>
+                                    <input class="form-control" id="validationWall" type="number" placeholder="4444" required="required">
+                                    <div class="invalid-feedback">
+                                        Please provide a valid firewall code.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="validationPassword">Passord</label>
+                                    <input class="form-control" id="validationPassword" type="password" placeholder="*****" required="required">
+                                    <div class="invalid-feedback">
+                                        Please provide a valid password.
+
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary float-right" type="submit" onclick="addOBSControllers();">Add new</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Aktive OBS PC'er</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="obsControllers">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Navn</th>
+                                    <th scope="col">IP</th>
+                                    <th scope="col">Firewall</th>
+                                    <th scope="col">Passord</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Lab 4</td>
+                                    <td>192.168.1.1</td>
+                                    <td>4444</td>
+                                    <td>***********</td>
+                                    <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Lab 4</td>
+                                    <td>192.168.1.1</td>
+                                    <td>4444</td>
+                                    <td>***********</td>
+                                    <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Lab 4</td>
+                                    <td>192.168.1.1</td>
+                                    <td>4444</td>
+                                    <td>***********</td>
+                                    <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function addOBSControllers() {
+            $("#obsControllers tbody").append(
+                '<tr>' +
+                '<th scope="row">1</th>' +
+                '<td>Lab 4</td>' +
+                '<td>192.168.1.1</td>' +
+                '<td>4444</td>' +
+                '<td>***********</td>' +
+                '<td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td></tr>'
+            );
+        };
+        $(document).ready(function () {
+            addOBSControllers();
+        });
+    </script>
+{% endblock %}

@@ -20,7 +20,6 @@ app.secret_key = b'l>/p)$3rsEDj_C:G_6#Pr:9l345d@}'
 # app.permanent_session_lifetime = timedelta(minutes=30)  # max time the session is stored.
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 
-
 # End Config
 
 
