@@ -1,4 +1,6 @@
-{% extends "template.html" %}
+{% extends "admin/template.html" %}
+
+{% block active %}a_exams{% endblock %}
 
 {% block title %}
     Admin > Exams
@@ -118,6 +120,6 @@
 
 {% endblock %}
 {% block script %}
-    <script src="{{ url_for('static/admin/js/plugins', filename='datatables.min.js') }}"></script>
-    <script src="{{ url_for('static/admin/js/scripts', filename='datatables.script.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/plugins/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/scripts/datatables.script.min.js') }}"></script>
 {% endblock %}

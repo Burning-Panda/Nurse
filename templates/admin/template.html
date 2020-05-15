@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}{% endblock %}</title>
-    <link href="{{ url_for('static/admin/css', filename='Nunito.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static/admin/css/themes', filename='lite-purple.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static/admin/css/plugins', filename='perfect-scrollbar.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static/admin/css/plugins', filename='datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='admin/css/Nunito.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='admin/css/themes/lite-purple.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='admin/css/plugins/perfect-scrollbar.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='admin/css/plugins/datatables.min.css') }}" rel="stylesheet">
 </head>
 
 <body class="text-left">
 <div class="app-admin-wrap layout-sidebar-large">
     <div class="main-header">
         <div class="logo">
-            <img src="{{ url_for('static/admin/images', filename='logo.png') }}" alt="logo">
+            <img src="{{ url_for('static', filename='admin/images/logo.png') }}" alt="logo">
         </div>
         <div class="menu-toggle">
             <div></div>
@@ -32,22 +32,22 @@
     <div class="side-content-wrap">
         <div class="sidebar-left open rtl-ps-none" data-perfect-scrollbar="" data-suppress-scroll-x="true">
             <ul class="navigation-left">
-                <li class="nav-item"><a class="nav-item-hold" href="#"><i class="nav-icon i-Bar-Chart"></i><span class="nav-text">Dashboard</span></a>
+                <li class="nav-item" id="index"><a class="nav-item-hold" href="{{ url_for('admin_main') }}"><i class="nav-icon i-Bar-Chart"></i><span class="nav-text">Dashboard</span></a>
                     <div class="triangle"></div>
                 </li>
-                <li class="nav-item"><a class="nav-item-hold" href="#"><i class="nav-icon i-Library"></i><span class="nav-text">Exams</span></a>
+                <li class="nav-item" id="a_exams"><a class="nav-item-hold" href="{{ url_for('admin_exams') }}"><i class="nav-icon i-Library"></i><span class="nav-text">Exams</span></a>
                     <div class="triangle"></div>
                 </li>
-                <li class="nav-item"><a class="nav-item-hold" href="#"><i class="nav-icon i-File-Clipboard-File--Text"></i><span class="nav-text">Forms</span></a>
+                <li class="nav-item" id="tbl_conf"><a class="nav-item-hold" href="{{ url_for('tablet_config') }}"><i class="nav-icon i-File-Clipboard-File--Text"></i><span class="nav-text">Tablet Config</span></a>
                     <div class="triangle"></div>
                 </li>
-                <li class="nav-item"><a class="nav-item-hold" href="response.html"><i class="nav-icon i-File-Horizontal-Text"></i><span class="nav-text">Responses</span></a>
+                <li class="nav-item" id="answers"><a class="nav-item-hold" href="{{ url_for('admin_responses') }}"><i class="nav-icon i-File-Horizontal-Text"></i><span class="nav-text">Svar</span></a>
                     <div class="triangle"></div>
                 </li>
-                <li class="nav-item active" data-item="users"><a class="nav-item-hold" href="#"><i class="nav-icon i-Administrator"></i><span class="nav-text">Users</span></a>
+                <li class="nav-item" id="usrs" data-item="users"><a class="nav-item-hold" href="{{ url_for('admin_users') }}"><i class="nav-icon i-Administrator"></i><span class="nav-text">Users</span></a>
                     <div class="triangle"></div>
                 </li>
-                <li class="nav-item" data-item="others"><a class="nav-item-hold" href="#"><i class="nav-icon i-Double-Tap"></i><span class="nav-text">Others</span></a>
+                <li class="nav-item" id="obs_cont" data-item="others"><a class="nav-item-hold" href="{{ url_for('admin_exams') }}"><i class="nav-icon i-Double-Tap"></i><span class="nav-text">OBS PCer</span></a>
                     <div class="triangle"></div>
                 </li>
             </ul>
@@ -75,19 +75,23 @@
     </div>
 </div>
 
-    <script src="{{ url_for('static/admin/js/plugins', filename='jquery-3.3.1.min.js') }}"></script>
-    <script src="{{ url_for('static/admin/js/plugins', filename='bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ url_for('static/admin/js/plugins', filename='perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/plugins/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/plugins/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/plugins/perfect-scrollbar.min.js') }}"></script>
 
-    <script src="{{ url_for('static/admin/js/scripts', filename='script.min.js') }}"></script>
-    <script src="{{ url_for('static/admin/js/scripts', filename='sidebar.large.script.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/scripts/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/scripts/sidebar.large.script.min.js') }}"></script>
 
 {% block script %}
 {% endblock %}
 
-    <script src="{{ url_for('static/admin/js/scripts', filename='customizer.script.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/scripts/customizer.script.min.js') }}"></script>
 
 {% block endstyles %}
 {% endblock %}
+<script>
+    const d = document.getElementById("{% block active %}{% endblock %}");
+    d.className += " active";
+</script>
 </body>
 </html>

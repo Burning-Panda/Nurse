@@ -1,4 +1,6 @@
-{% extends "template.html" %}
+{% extends "admin/template.html" %}
+
+{% block active %}index{% endblock %}
 
 {% block title %}
     Admin > Home
@@ -101,9 +103,9 @@
 {% endblock %}
 
 {% block script %}
-    <script src="{{ url_for('static/admin/js/plugins', filename='echarts.min.js') }}"></script>
-    <script src="{{ url_for('static/admin/js/scripts', filename='echart.options.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/plugins/echarts.min.js') }}"></script>
 
-    <script src="{{ url_for('static/admin/js/scripts', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/scripts/echart.option.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/scripts/dashboard.js') }}"></script>
 
 {% endblock %}

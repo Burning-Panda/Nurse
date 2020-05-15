@@ -83,6 +83,7 @@ CREATE TABLE users (
     FOREIGN KEY (userType)
         REFERENCES userTypes (id)
 );
+
 CREATE TABLE userTypes(
     id integer PRIMARY KEY,
     name text,

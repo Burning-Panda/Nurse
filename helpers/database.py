@@ -41,17 +41,17 @@ def insert_db(query, args=()):
 
 def sensors_list(x=None, i_a=False):
     if x is None:
-        get_sen = query_db('select * from examsensor')
+        get_sen = query_db('select * from users WHERE userType = 1')
     else:
         if i_a is True:
-            get_sen = query_db('select * from examsensor where is_active= 1;')
+            get_sen = query_db('select * from users where userType = 1 and is_active= 1;')
         else:
-            get_sen = query_db('select * from examsensor')
+            get_sen = query_db('select * from users WHERE userType = 1')
     return get_sen
 
 
 def sensor_exists(card):
-    access_id = query_db('select * from examsensor where accessID = ?',
+    access_id = query_db('select * from users where card_number = ?',
                          [card], one=True)
     if access_id is None:
         return 'No such user'
@@ -244,6 +244,18 @@ def get_room_info(room_id):
     q = query_db('SELECT * FROM rooms WHERE room = ?',
                  [room_id], one=True)
     return q
+
+
+# ########################################################### #
+# #                      Admin pages                        # #
+# ########################################################### #
+def admin_login(u, m):
+    q = query_db('SELECT user_id, userType, password FROM users WHERE user_id = ?'
+                 [u], one=True)
+    if q[1] is 3 and m is q[2]:
+        return True
+    else:
+        return False
 
 
 # ########################################################### #

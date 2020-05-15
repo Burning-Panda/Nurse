@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, url_for, redirect, request, session, Response, make_response, flash
+import os
+from flask import Flask, render_template, url_for, redirect, request, session, Response, make_response, flash, send_from_directory
 from datetime import timedelta, datetime
 import json
 
@@ -20,6 +21,7 @@ app.secret_key = b'l>/p)$3rsEDj_C:G_6#Pr:9l345d@}'
 # app.permanent_session_lifetime = timedelta(minutes=30)  # max time the session is stored.
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 
+auth_key = '9gHWcXbXbt7cm0bWZTfPO7vLiiSu0uEFSB3n9jYJyYsr3nqcbpnaFODI73nwM5fBqQcaulXmUAndUVAKsDOfdN112micQ'
 # End Config
 
 
@@ -308,9 +310,8 @@ def obs_status_change(room_id, command):
 # ########################################################### #
 
 @app.route("/admin")
-def admin_config():
-    # TODO: Add admin page
-    return f'Admin page'
+def admin_main():
+    return render_template('admin/index.html')
 
 
 @app.route("/tablet-config")
@@ -320,50 +321,84 @@ def tablet_config():
     #   * sessions
     #       - session["room"] = 1
     #   * Form data handler
-    return f'tablet Config'
+    return render_template('admin/tablet-control.html')
 
 
 @app.route("/admin/exams")
 def admin_exams():
     # TODO: Add admin exams page
-    return f'Admin Exams'
+    return render_template('admin/exams.html')
 
 
 @app.route("/admin/exams/new")
 def admin_exams_new():
     # TODO: Add exams add new page
-    return f'New exam'
+    return render_template('admin/view-exam.html')
 
 
 @app.route("/admin/exams/edit/<ex_id>")
 def admin_exam_edit(ex_id):
     # TODO: Add exams edit exam
-    return f'Edit exams'
+    return render_template('admin/view-exam.html')
 
 
 # Sensors
-@app.route("/admin/sensors")
-def admin_sensors():
+@app.route("/admin/users")
+def admin_users():
     # TODO: Add admin page for sensors
     #   Check only active or everyone
-    return f'Sensor'
+    return render_template('admin/users.html')
 
 
-@app.route("/admin/sensors/new")
-def admin_new_sensor(sensor_id):
+@app.route("/admin/users/new")
+def admin_new_users():
     # TODO: Add a way to add new sensors
-    return True
+    return render_template('admin/users.html')
 
 
-@app.route("/admin/sensors/edit/<sensor_id>")
-def admin_sensors_edit_sensor(sensor_id):
+@app.route("/admin/users/edit/<uid>")
+def admin_user_edit(uid):
     # TODO: Add a way to edit the sensors or delete
-    return True
+    return render_template('admin/users.html')
+
+
+@app.route("/admin/response")
+def admin_responses():
+    # TODO: Add admin exams page
+    return render_template('admin/answers.html')
+
+
+@app.route("/admin/response/view/<rid>")
+def admin_responses_single(rid):
+    # TODO: Add admin exams page
+    return render_template('admin/view-answers.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_admin():
+    if request.method == "POST" and session.get('is_auth') is None:
+        log = request.form
+        q = admin_login(log[0], log[1])
+        if q is True:
+            session['is_auth'] = auth_key
+        return redirect(url_for(admin_main))
+    else:
+        if session.get('is_auth'):
+            session.pop('is_auth', None)
+
+        return render_template('admin/signin.html')
 
 
 # ########################################################### #
 # #                     Functions!                          # #
 # ########################################################### #
+
+def login_val():
+    if session.get('is_auth') == auth_key:
+        return True
+    else:
+        return False
+
 
 def getList(dict):
     # Code fetched from GeeksForGeeks at https://www.geeksforgeeks.org/python-get-dictionary-keys-as-a-list/
@@ -418,6 +453,11 @@ def not_found():
     #  Status: Does not work!!!!
     """Page not found."""
     return make_response(render_template("404.html"), 404)
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 # Starts the app on local network.
