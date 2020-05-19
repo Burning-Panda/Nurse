@@ -20,22 +20,16 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form>
+                    <form method="POST">
                         <fieldset>
-                            <legend>Pick a room:</legend>
+                            <legend>Velg et rom.</legend>
                             <div class="text-16">
-                                <label class="radio radio-success">
-                                    <input type="radio" name="radio" value="2">
-                                    <span>Success</span><span class="checkmark"></span>
-                                </label>
-                                <label class="radio radio-success">
-                                    <input type="radio" name="radio" value="2">
-                                    <span>Success</span><span class="checkmark"></span>
-                                </label>
-                                <label class="radio radio-success">
-                                    <input type="radio" name="radio" value="2">
-                                    <span>Success</span><span class="checkmark"></span>
-                                </label>
+                                {% for room in rooms %}
+                                    <label class="radio radio-success">
+                                        <input type="radio" name="roomNbR" value="{{ room[0] }}" required >
+                                        <span>{{ room[1] }}</span><span class="checkmark"></span>
+                                    </label>
+                                {% endfor %}
                             </div>
                             <button class="btn btn-dark ripple m-1 float-right" type="submit">Lagre</button>
                         </fieldset>

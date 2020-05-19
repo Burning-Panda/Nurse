@@ -127,8 +127,12 @@ def check_if_minimum_is_completed(exam, min_correct):
 # #                         Results                         # #
 # ########################################################### #
 
-def get_results(result_id):
-    r = query_db('SELECT * FROM results WHERE res_id = ?',
+def get_single_result(result_id):
+    r = query_db('SELECT results.res_id, results.case_id, results.date_completed, results.exam_id, results.answers, '
+                 'results.sensor, results.is_exam, results.time_used, results.student, results.grade, '
+                 'results.comment, results.start_time, results.stop_time, results.json, exams.shortname, '
+                 'exams.max_time FROM results LEFT JOIN exams on '
+                 'results.exam_id = exams.exam_id WHERE results.res_id = ?',
                  [result_id], one=True)
     return r
 
@@ -153,7 +157,7 @@ def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor,
     se = str(sensor)
 
     stu = 0
-    comment = "Comments"
+    comment = None
 
     con = insert_db('INSERT INTO results'
                     '(case_id, date_completed, exam_id, answers, sensor, is_exam, time_used, student, grade,'
@@ -162,6 +166,11 @@ def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor,
                     'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     [c, date, e, a, se, ie, time_used, stu, gr, comment, start_time, now, json])
     return con
+
+
+def result_with_comment(comment, res_id):
+    insert_db('UPDATE results SET comment = ? WHERE res_id = ?',
+              [comment, res_id])
 
 
 def get_case(x):
@@ -176,7 +185,7 @@ def get_case(x):
 
 def db_set_active_exam(e=None, r=None):
     if e is not None and r is not None:
-        query_db('INSERT INTO active_exam (exam_id, start_time, room, recording) VALUES(?,?,?,?)',
+        query_db('INSERT INTO active_exam (exam_id, start_time, room) VALUES(?,?,?)',
                  [e, r], one=True)
     a = query_db('SELECT ae_id FROM active_exam WHERE room = ?',
                  [r], one=True)
@@ -197,7 +206,7 @@ def start_new_exam(exam_id, room):
         return 'Exam is ongoing in that room, give this to an admin to check if room is set correctly'
 
     time = datetime.now()
-    query_db('INSERT INTO active_exam (exam_id, start_time, room, recording) VALUES (?)',
+    query_db('INSERT INTO active_exam (exam_id, start_time, room) VALUES (?)',
              [exam_id, time, room, 1], one=True)
     return True
 
@@ -235,7 +244,7 @@ def obs_rooms_available():
 
 
 def add_new_room(room_name, room, ip, firewall, password):
-    query_db('INSERT INTO roomName, room, ip, firewall, password) VALUES (?)',
+    query_db('INSERT INTO rooms(roomName, room, ip, firewall, password) VALUES (?)',
              [room_name, room, ip, firewall, password], one=True)
     return True
 
@@ -256,6 +265,90 @@ def admin_login(u, m):
         return True
     else:
         return False
+
+
+# Dashboard
+def count_all_completed_exams():
+    count = query_db('SELECT COUNT(*) FROM results')
+    return count[0]
+
+
+def count_all_last_30_days():
+    count = query_db('SELECT count(*) FROM results WHERE datetime(start_time) >= datetime("now", "-30 days")')
+    return count[0]
+
+
+def count_last_24_hours():
+    count = query_db('SELECT count(*) FROM results WHERE datetime(start_time) >= datetime("now", "-24 hours")')
+    return count[0]
+
+
+def count_passed_exams():
+    count = query_db('SELECT count(*) FROM results WHERE is_exam = 1 AND grade = 1')
+    return count[0]
+
+
+def last_30_day_count_per_day():
+    count = []
+    for x in range(29):
+        if x is 0:
+            count.append(query_db('SELECT count(*) FROM results WHERE date(date_completed) == date("now")', one=True))
+        elif x is 1:
+            day = f"-{x} day"
+            count.append(query_db('SELECT count(*) FROM results WHERE date(date_completed) == date("now", ?)',
+                                  [day], one=True))
+        else:
+            day = f"-{x} days"
+            count.append(query_db('SELECT count(*) FROM results WHERE date(date_completed) == date("now", ?)',
+                                  [day], one=True))
+
+    return count
+
+
+# Exams
+def get_active_exams():
+    q = query_db('SELECT * FROM exams WHERE is_active = 1')
+    return q
+
+
+def get_deactivated_exams():
+    q = query_db('SELECT * FROM exams WHERE is_active = 0')
+    return q
+
+
+def activate_exam(x):
+    insert_db('UPDATE exams SET is_active = 1 WHERE exam_id = ?',
+             [x])
+
+
+def deactivate_exam(x):
+    insert_db('UPDATE exams SET is_active = 0 WHERE exam_id = ?',
+             [x])
+
+
+# Results
+def get_all_results():
+    q = query_db('select results.res_id, results.date_completed, results.exam_id, results.time_used, results.student, '
+                 'results.grade, exams.exam_id, exams.shortname, exams.max_time FROM results LEFT JOIN exams on '
+                 'results.exam_id = exams.exam_id')
+    return q
+
+
+# ########################################################### #
+# #                        install                          # #
+# ########################################################### #
+
+def add_to_active_tablets(unique):
+    insert_db('INSERT INTO active_tablets(date, is_active, uuid)'
+              'VALUES(date("now"), 1, ?)',
+              [unique])
+    return None
+
+
+def delete_from_active_tablets(unique):
+    insert_db('DELETE FROM active_tablets WHERE uuid = ?',
+              [unique])
+    return True
 
 
 # ########################################################### #

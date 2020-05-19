@@ -37,17 +37,21 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td><b>1</b></td>
-                                    <td>OSCE Vasoaktiv infusjon</td>
-                                    <td>15 min</td>
-                                    <td>2011/04/25</td>
-                                    <td>Aktivert</td>
-                                    <td>
-                                        <a class="text-success mr-2" href="view-exam.html"><i class="nav-icon i-Pen-2 font-weight-bold"></i><b style="margin-right:20px;"> REDIGER</b></a>
-                                        <a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i><b> DEAKTIVER</b></a>
-                                    </td>
-                                </tr>
+                                {% for x in aex %}
+
+                                    <tr>
+                                        <th>{{ x[0] }}</th>
+                                        <td>{{ x[1] }}</td>
+                                        <td>{{ x[5] }} min</td>
+                                        <td>{{ x[6] }}</td>
+                                        <td>Aktivert</td>
+                                        <td>
+                                            <a class="text-success mr-2" href="{{ url_for('admin_exam_edit',ex_id=x[0]) }}"><i class="nav-icon i-Pen-2 font-weight-bold"></i><b style="margin-right:20px;"> REDIGER</b></a>
+                                            <a class="text-danger mr-2 cursor-pointer" href="{{ url_for('admin_exams_switch', eid=x[0], funct=0) }}"><i class="nav-icon i-Close-Window font-weight-bold"></i><b> DEAKTIVER</b></a>
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
                                 </tbody>
                                 <tfoot>
                                 <tr>
@@ -83,17 +87,21 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td><b>1</b></td>
-                                    <td>OSCE Vasoaktiv infusjon</td>
-                                    <td>15 min</td>
-                                    <td>2011/04/25</td>
-                                    <td>Deaktivert</td>
-                                    <td>
-                                        <a class="text-success mr-2" href="view-exam.html"><i class="nav-icon i-Pen-2 font-weight-bold"></i><b style="margin-right:20px;"> REDIGER</b></a>
-                                        <a class="text-success mr-2" href="#"><i class="nav-icon i-Yes font-weight-bold"></i><b> AKTIVER</b></a>
-                                    </td>
-                                </tr>
+                                {% for x in dex %}
+
+                                    <tr>
+                                        <th>{{ x[0] }}</th>
+                                        <td>{{ x[1] }}</td>
+                                        <td>{{ x[5] }} min</td>
+                                        <td>{{ x[6] }}</td>
+                                        <td>Deaktivert</td>
+                                        <td>
+                                            <a class="text-success mr-2" href="{{ url_for('admin_exam_edit',ex_id=x[0]) }}"><i class="nav-icon i-Pen-2 font-weight-bold"></i><b style="margin-right:20px;"> REDIGER</b></a>
+                                            <a class="text-success mr-2 cursor-pointer" href="{{ url_for('admin_exams_switch', eid=x[0], funct=1) }}"><i class="nav-icon i-Close-Window font-weight-bold"></i><b> AKTIVER</b></a>
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
                                 </tbody>
                                 <tfoot>
                                 <tr>
@@ -122,4 +130,5 @@
 {% block script %}
     <script src="{{ url_for('static', filename='admin/js/plugins/datatables.min.js') }}"></script>
     <script src="{{ url_for('static', filename='admin/js/scripts/datatables.script.min.js') }}"></script>
+
 {% endblock %}

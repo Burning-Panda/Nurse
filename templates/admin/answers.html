@@ -34,6 +34,26 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+
+                                    {% for result in results %}
+
+                                        <tr>
+                                            <th>{{ result[0] }}</th>
+                                            <td>{{ result[7] }}</td>
+                                            <td>{{ result[3] }} min</td>
+                                            <td>{{ result[4] }}</td>
+                                            <td>
+                                                {% if result[5] == 1 %}
+                                                    <span class="badge badge-pill badge-success p-2 m-1">Bestått</span>
+                                                {% else %}
+                                                    <span class="badge badge-pill badge-danger p-2 m-1">Ikke Bestått</span>
+                                                {% endif %}
+                                            </td>
+                                            <th><a href="{{ url_for('admin_responses_single', rid=result[0]) }}">{{ result[1] }}</a></th>
+                                        </tr>
+
+                                    {% endfor %}
+
                                     </tbody>
                                     <tfoot>
                                     <tr>
@@ -59,33 +79,7 @@
 
 
 {% block script %}
-<script>
-    function addTestData(i,randomItem) {
-        $("#zero_configuration_table tbody").append(
-            '<tr>' +
-            '<th>' + i + '</th>' +
-            '<td>OSCE Vasoaktiv infusjon</td>' +
-            '<td>15 min</td>' +
-            '<td>' + i + i + i + i + i + i +  i + i + i + i + i + '</td>' +
-            '<td>'+ randomItem +'</td>' +
-            '<th><a href="view-answer.html">2011/04/25</a></th>'
-        );
-    };
-    $(document).ready(function () {
-        const myArray = ['<span class="badge badge-pill badge-success p-2 m-1">Passed</span>','<span class="badge badge-pill badge-danger p-2 m-1">Failed</span>']
-        let i;
-        for (i = 0; i < 30; i++) {
-            let randomItem = myArray[Math.floor(Math.random()*myArray.length)];
-            addTestData(i,randomItem);
-        }
-    });
-</script>
-
 
     <script src="{{ url_for('static', filename='admin/js/plugins/datatables.min.js') }}"></script>
     <script src="{{ url_for('static', filename='admin/js/scripts/datatables.script.min.js') }}"></script>
 {% endblock %}
-
-</body>
-
-</html>

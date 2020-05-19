@@ -23,7 +23,7 @@
                         <div class="card-body text-center"><i class="i-Notepad"></i>
                             <div class="content">
                                 <p class="text-muted mt-2 mb-0">Tester gjennomført på 30 dager</p>
-                                <p class="text-primary text-24 line-height-1 mb-2">205</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">{{ ws[1] }}</p>
                             </div>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                         <div class="card-body text-center"><i class="i-Open-Book"></i>
                             <div class="content">
                                 <p class="text-muted mt-2 mb-0">Tester gjennomført i dag</p>
-                                <p class="text-primary text-24 line-height-1 mb-2">$4021</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">today</p>
                             </div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                         <div class="card-body text-center"><i class="i-Yes"></i>
                             <div class="content">
                                 <p class="text-muted mt-2 mb-0">Beståtte øvinger</p>
-                                <p class="text-primary text-24 line-height-1 mb-2">80</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">800</p>
                             </div>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                         <div class="card-body text-center"><i class="i-Diploma"></i>
                             <div class="content">
                                 <p class="text-muted mt-2 mb-0">Alle tester gjennomført</p>
-                                <p class="text-primary text-24 line-height-1 mb-2">$1200</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">{{ ws[0] }}</p>
                             </div>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card mb-4">
-                        <div class="card-body p-0">
+                        <div class="card-body p-0">{{ last30days }}
                             <h5 class="card-title m-0 p-3">Siste 30 dagene med tester gjennomført</h5>
                             <div id="echart3" style="height: 360px;"></div>
                         </div>

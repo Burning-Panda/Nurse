@@ -3,8 +3,27 @@
 {% block active %}answers{% endblock %}
 
 {% block title %}
-    Admin > Home
+    Resultat: {{ r[0] }}
 {% endblock %}
+
+
+<h1>{{ r[9] }}</h1>
+{{ r }}<br>
+<h2>{{ grade }}</h2>
+</div>
+<div class="container">
+
+    <p>
+    <b>Info to the stud</b>
+
+    </p>
+    <p>
+    <b>Questions</b>
+    </p>
+<p>
+    {{ r[3] }}
+</p>
+
 
 {% block content %}
     <div class="main-content">
@@ -19,16 +38,20 @@
                     <div class="card-body">
                         <div class="row mb-5">
                             <div class="col-md-8 col-auto mr-auto">
-                                <h3>Exam Title</h3>
-                                <p>Info tekst</p>
+                                <h3 class="pb-2 border-bottom">{{ r[14] }}</h3>
+                                <ul class="mt-4">
+                                    {% for i in exam_info %}
+                                        <li>{{ i }}</li>
+                                    {% endfor %}
+                                </ul>
                             </div>
                             <div class="col-md-4 text-right col-auto" style="max-width:160px;">
                                 <div class="row align-items-end">
                                     <table class="col small">
                                         <tbody>
-                                            <tr><th>Student ID:</th><td>0000000</td></tr>
-                                            <tr><th>Result ID:</th><td>0000000</td></tr>
-                                            <tr><th>Date:</th><td>20/04/2020</td></tr>
+                                            <tr><th>Student ID:</th><td>{{ r[8] }}</td></tr>
+                                            <tr><th>Result ID:</th><td>{{ r[0] }}</td></tr>
+                                            <tr><th>Date:</th><td>{{ r[2] }}</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -44,10 +67,29 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {% for a,i in p %}
+                                    <tr>
+                                        <td>{{ a[0] }}</td>
+                                        <td>
+                                            {% if a[6] == 1 %}
+                                                <b>{{ a[3] }}</b>
+                                            {% else %}
+                                                {{ a[3] }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if i == '1' %}
+                                                <span class="badge badge-round badge-round-opacity-success"><i class="i-Yes text-15"></i></span>
+                                            {% else %}
+                                                <span class="badge badge-round badge-round-opacity-danger"><i class="i-Close text-15"></i></span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                                 <tr>
-                                    <td>33</td>
-                                    <td>Kobler til sprøyter og fyller slanger, fyller infusjonssett med infusjonsvæske uten deponering av medikament i infusjonsslange</td>
-                                    <td><span class="badge badge-round badge-round-opacity-danger"><i class="i-Close text-15"></i></span></td>
+                                    <th></th>
+                                    <td>Tid brukt: {{ r[7] }}</td>
+                                    <td></td>
                                 </tr>
                                 </tbody>
                                 <tfoot>
@@ -64,14 +106,22 @@
                                 <b>Sensor:</b> Navn Navnesen
                             </div>
                             <div class="col-md-4 text-center">
-                                <span class="text-19 font-weight-bold">Bestått</span>
+                                <span class="text-19 font-weight-bold">
+                                    {% if r[9] == 1 %}
+                                        Bestått
+                                    {% else %}
+                                        Ikke Bestått
+                                    {% endif %}
+                                </span>
                             </div>
                         </div>
+                    {% if r[9] != 1 %}
                         <div class="row justify-content-center">
-                            <div class="col-md-8 border">
-                                comment text
+                            <div class="col-md-11 border p-3">
+                                {{ r[10] }}
                             </div>
                         </div>
+                    {% endif %}
                     </div>
                 </div>
             </div>
@@ -89,25 +139,6 @@
 {% block script %}
     <script src="{{ url_for('static', filename='admin/js/plugins/datatables.min.js') }}"></script>
     <script src="{{ url_for('static', filename='admin/js/scripts/datatables.script.min.js') }}"></script>
-<script>
-    function addTestData(i,randomItem) {
-        $("#test_data tbody").append(
-            '<tr>' +
-            '<th>'+ i +'</th>' +
-            '<td>Kobler til sprøyter og fyller slanger, fyller infusjonssett med infusjonsvæske uten deponering av medikament i infusjonsslange</td>' +
-            '<td><span class="badge badge-round badge-round-opacity-'+randomItem+' badge-rounded-custom"><i class="i-Yes text-20"></i></span></td>' +
-            '</tr>'
-        );
-    };
-    $(document).ready(function () {
-        const myArray = ['success','danger']
-        let i;
-        for (i = 0; i < 6; i++) {
-            let randomItem = myArray[Math.floor(Math.random()*myArray.length)];
-            addTestData(i,randomItem);
-        }
-    });
-</script>
 {% endblock %}
 
 </body>

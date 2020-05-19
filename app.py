@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template, url_for, redirect, request, session, Response, make_response, flash, send_from_directory
 from datetime import timedelta, datetime
 import json
+import uuid
 
 # Import from helper files
 from helpers.database import *
@@ -15,20 +16,20 @@ from helpers.pdf import render
 # #                     App Config                          # #
 # ########################################################### #
 app = Flask(__name__)
-app.secret_key = b'l>/p)$3rsEDj_C:G_6#Pr:9l345d@}'
+app.secret_key = b'aFvAUaVyaxW7ENbT4S2HDyQW3n0EEGnJYtehL9kG29LUaYWu56g4-KE5aZl3ck4xJkXEku4PoduaYK3k'
+app.config["SECRET_KEY"] = 'aFvAUaVyaxW7ENbT4S2HDyQW3n0EEGnJYtehL9kG29LUaYWu56g4-KE5aZl3ck4xJkXEku4PoduaYK3k'
 # Sets the secret key, used for signing sessions, and making sure they are not tampered with.
 
-# app.permanent_session_lifetime = timedelta(minutes=30)  # max time the session is stored.
+app.permanent_session_lifetime = timedelta(days=365)  # max time the session is stored.
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 
-auth_key = '9gHWcXbXbt7cm0bWZTfPO7vLiiSu0uEFSB3n9jYJyYsr3nqcbpnaFODI73nwM5fBqQcaulXmUAndUVAKsDOfdN112micQ'
+auth_key = 'Yv326fIgqRoZocoYo5jjU0OAR_rJe6LpzCkbAr6F'
 # End Config
 
 
 # ########################################################### #
 # #                    Main application                     # #
 # ########################################################### #
-
 @app.route('/')
 @app.route('/index')
 @app.route('/home')
@@ -45,8 +46,10 @@ def splash():
     """
 
     session_reset()
-    session['room'] = 1
-    session['is_exam'] = 0
+    if session.get('room'):
+        session['room'] = 1
+
+    session['is_exam'] = 1
 
     return render_template("index.html", homepage=True)
 
@@ -97,7 +100,7 @@ def exam_choice(exam_id):
     return render_template('exam.html', exam_id=exam_id, exam=ex_info, desc=splitter, case=case, gender=g)
 
 
-@app.route('/exam/<exam>/in-progress', methods=['POST', 'GET'])
+@app.route('/exam/<int:exam>/in-progress', methods=['POST', 'GET'])
 def tasks(exam):
     """
     :param exam: gets the exam from the website link eg /exam/1/in-progress
@@ -170,6 +173,9 @@ def tasks(exam):
         ins = insert_result(case_id, exam, answers, st_time, text_grade, ie, active_sensor, dump)
 
         obs_status_change(get_room, 'stop')
+        # if grade is 0:
+        #    redirect(url_for('comment', result_id=ins))
+        # else:
         return redirect(url_for('results', result_id=ins))
         # return render_template('results.html', e=exam, q=e, data=answers, count=count, c=min_correct, i=ins)
 
@@ -195,12 +201,8 @@ def comment(result_id):
     if request.method == "POST":
         form_data = request.form
         want_comment = form_data['comment']
-        # if Yes, renders the "want comment page" else redirects to the results page.
-        if want_comment is 'yes':
-            # render_template('want_comment.html')
-            return f'Want comment'
-        else:
-            return redirect(url_for(results, id=result_id))
+        result_with_comment(str(want_comment))
+        return redirect(url_for(results, id=result_id))
     else:
         # return render_template('comment.html', id=result_id)
         return render_template('results.html')  # , id=result_id)
@@ -212,7 +214,7 @@ def results(result_id):
     #   * make sure the correct students are the only ones who can read it
     #     scan card to access?
 
-    result = get_results(result_id)
+    result = get_single_result(result_id)
     answers = result[4].split('|')
 
     exam_info = get_exam_info(result[3])
@@ -265,6 +267,8 @@ def sensor_login():
         # Afterwards, returns a message to the ajax script on the website, telling it to continue.
         flash('Your card was scanned successfully!')
         return Response("done", status=200, mimetype='application/json')
+    else:
+        return Response("fail", status=406, mimetype='application/json')
 
 
 @app.route('/scan/student', methods=['GET', 'POST'])
@@ -273,12 +277,8 @@ def student_login():
         return render_template('loader.html')
 
     if request.method == 'POST':
-        # AJAX request on the page sends a request after it is loaded,
-        # and this program waits for a card to be read by the scanner before sending a response.
         student = read()
         while student is None:
-            # making sure a card is actually read.
-            # If nothing is done, recheck the variable
             pass
 
         if student is False:
@@ -286,7 +286,6 @@ def student_login():
             return Response("fail", status=406, mimetype='application/json')
 
         session['student'] = student
-        # Returns a message to the ajax script on the website, telling it to continue to the next page.
         flash('Your card was scanned successfully!')
         return Response("done", status=200, mimetype='application/json')
 
@@ -311,35 +310,75 @@ def obs_status_change(room_id, command):
 
 @app.route("/admin")
 def admin_main():
-    return render_template('admin/index.html')
+    ax = count_all_completed_exams()
+    l30d = count_all_last_30_days()
+    l24d = count_last_24_hours()
+
+    websiteStrings = []
+
+    websiteStrings.append(ax[0])
+    websiteStrings.append(l30d[0])
+    websiteStrings.append(l24d[0])
+    websiteStrings.append(ax[0])
+
+    countL30D = last_30_day_count_per_day()
+
+    return render_template('admin/index.html', ws=websiteStrings, last30days=countL30D)
 
 
-@app.route("/tablet-config")
+@app.route("/tablet-config", methods=['GET', 'POST'])
 def tablet_config():
-    # TODO: Add  a tablet config page
-    #   * needs a room setup
-    #   * sessions
-    #       - session["room"] = 1
-    #   * Form data handler
-    return render_template('admin/tablet-control.html')
+    if request.method == 'POST':
+        session['room'] = request.form.get('roomNbR')
+        flash('Aktiv Rom nummer er lagret!', 'success')
+        room_list = obs_rooms_available()
+        return render_template('admin/tablet-control.html', rooms=room_list)
+    else:
+        room_list = obs_rooms_available()
+        return render_template('admin/tablet-control.html', rooms=room_list)
 
 
-@app.route("/admin/exams")
+@app.route("/admin/exams", methods=['GET', 'POST'])
 def admin_exams():
-    # TODO: Add admin exams page
-    return render_template('admin/exams.html')
+        aex = get_active_exams()
+        dex = get_deactivated_exams()
+        return render_template('admin/exams.html', aex=aex, dex=dex)
+
+
+@app.route("/admin/exams/<int:eid>/<int:funct>", methods=['GET'])
+def admin_exams_switch(eid, funct):
+    error = None
+    if funct == 1:
+        activate_exam(eid)
+        flash(f'You successfully activated a exam with id: {eid}', 'success')
+        return redirect(url_for('admin_exams'))
+    elif funct == 0:
+        deactivate_exam(eid)
+        flash(f'You successfully deactivated a exam with id: {eid}', 'success')
+        return redirect(url_for('admin_exams'))
+    else:
+        flash(f'Server error, do not worry. Please try again.', 'error')
+        return redirect(url_for('admin_exams'))
 
 
 @app.route("/admin/exams/new")
 def admin_exams_new():
+    if request.method == 'POST':
+        pass
     # TODO: Add exams add new page
+
     return render_template('admin/view-exam.html')
+
+
+@app.route("/admin/exams/new/post")
+def admin_exams_new_post():
+    return redirect(url_for('admin_exams'))
 
 
 @app.route("/admin/exams/edit/<ex_id>")
 def admin_exam_edit(ex_id):
     # TODO: Add exams edit exam
-    return render_template('admin/view-exam.html')
+    return render_template('admin/view-exam.html', needs_hidden_field=True)
 
 
 # Sensors
@@ -352,26 +391,35 @@ def admin_users():
 
 @app.route("/admin/users/new")
 def admin_new_users():
-    # TODO: Add a way to add new sensors
+    # TODO: Add a way to add new Users
     return render_template('admin/users.html')
 
 
 @app.route("/admin/users/edit/<uid>")
 def admin_user_edit(uid):
-    # TODO: Add a way to edit the sensors or delete
+    # TODO: Add a way to edit the Users or delete
     return render_template('admin/users.html')
 
 
-@app.route("/admin/response")
+@app.route("/admin/results")
 def admin_responses():
-    # TODO: Add admin exams page
-    return render_template('admin/answers.html')
+    r = get_all_results()
+    return render_template('admin/answers.html', results=r)
 
 
-@app.route("/admin/response/view/<rid>")
+@app.route("/admin/results/view/<rid>")
 def admin_responses_single(rid):
-    # TODO: Add admin exams page
-    return render_template('admin/view-answers.html')
+    result = get_single_result(rid)
+    answers = result[4].split('|')
+
+    exam_info = get_exam_info(result[3])
+    info_to_student = exam_info[3].split('|')
+
+    questions = exam_get_questions(result[3])
+
+    zipped = zip(questions, answers)
+
+    return render_template('admin/view-answers.html', r=result, exam_info=info_to_student, p=zipped)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -425,6 +473,27 @@ def selected_exam(exam, sensor):
     else:
         session['active_exam'] = insert
         return True
+
+
+# ########################################################### #
+# #                     Full app reset!                     # #
+# ########################################################### #
+@app.route('/install', methods=['GET'])
+def first_time_install():
+    if session.get('tablet_unique_id') is None:
+        unique = uuid.uuid1()
+        session['tablet_unique_id'] = unique
+        add_to_active_tablets(unique)
+    return redirect(url_for('splash'))
+
+
+@app.route('/reset', methods=['GET'])
+def reset_tablet():
+    session_reset()
+    if session.get('tablet_unique_id'):
+        delete_from_active_tablets(session.get('tablet_unique_id'))
+        session.pop('tablet_unique_id', None)
+    return redirect(url_for('first_time_install'))
 
 
 def session_reset():

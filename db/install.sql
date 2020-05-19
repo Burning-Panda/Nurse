@@ -10,7 +10,6 @@ CREATE TABLE exams (
     is_active integer,
     min_correct integer
     );
-
 CREATE TABLE cases (
     case_id integer PRIMARY KEY,
     sex integer,
@@ -19,12 +18,10 @@ CREATE TABLE cases (
     weight real,
     asa text
     );
-
 CREATE TABLE questiontype (
     qt_id integer PRIMARY KEY,
     qtype text
     );
-
 CREATE TABLE examquestions (
     question_id integer PRIMARY KEY,
     examID integer,
@@ -66,7 +63,6 @@ CREATE TABLE active_exam (
     start_time text,
     room integer
 );
-
 CREATE TABLE users (
     user_id integer PRIMARY KEY,
     card_number TEXT,
@@ -83,7 +79,6 @@ CREATE TABLE users (
     FOREIGN KEY (userType)
         REFERENCES userTypes (id)
 );
-
 CREATE TABLE userTypes(
     id integer PRIMARY KEY,
     name text,
@@ -91,7 +86,6 @@ CREATE TABLE userTypes(
     FOREIGN KEY (id)
         REFERENCES users (userType)
 );
-
 CREATE TABLE rooms(
     server_id integer PRIMARY KEY,
     roomName text,
@@ -100,7 +94,12 @@ CREATE TABLE rooms(
     firewall integer,
     password text
 );
-
+CREATE TABLE active_tablets(
+    id integer PRIMARY KEY,
+    uuid TEXT,
+    date TEXT,
+    is_active integer
+);
 CREATE TABLE serverStatus(
     id integer PRIMARY KEY,
     CPU text,
@@ -108,7 +107,6 @@ CREATE TABLE serverStatus(
     DISKS text,
     NETWORK text
 );
-
 
 INSERT INTO rooms(roomName, room, ip, firewall, password)
 VALUES("testRoom",
@@ -264,8 +262,6 @@ VALUES (1,
         '1|0',
         0
     );
-
-
 
 
 
@@ -459,7 +455,6 @@ VALUES (
         datetime('now', 'localtime'),
         1,
         13);
-
 INSERT INTO examquestions (examID, question_type, question, q_description, answers,important)
 VALUES (4,
         1,

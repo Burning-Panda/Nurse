@@ -70,6 +70,7 @@
     <!-- =============== Left side End ================-->
     <div class="main-content-wrap d-flex flex-column sidenav-open">
         <!-- ============ Body content start ============= -->
+
         {% block content %}
         {% endblock %}
     </div>
@@ -84,6 +85,21 @@
 
 {% block script %}
 {% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <script src="{{ url_for('static', filename='admin/js/plugins/toastr.js') }}"></script>
+            <link href="{{ url_for('static', filename='admin/css/plugins/toastr.css') }}" rel="stylesheet">
+            <script>
+                {% for category, message in messages %}
+                $(document).ready(function () {
+                    toastr.{{ category }}("{{ message }}", "Slow Duration", {
+                        hideDuration: 3000
+                    });
+                });
+                {% endfor %}
+            </script>
+        {% endif %}
+    {% endwith %}
 
     <script src="{{ url_for('static', filename='admin/js/scripts/customizer.script.min.js') }}"></script>
 
