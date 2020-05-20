@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*- coding: ISO-8859-1 -*-
 import os
-from flask import Flask, render_template, url_for, redirect, request, session, Response, make_response, flash, send_from_directory
+from flask import Flask, render_template, url_for, redirect, request, session, Response, make_response, flash, \
+    send_from_directory
 from datetime import timedelta, datetime
 import json
 import uuid
@@ -25,7 +26,10 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 
 auth_key = 'Yv326fIgqRoZocoYo5jjU0OAR_rJe6LpzCkbAr6F'
 # End Config
+app.debug = True
 
+
+for_testing_purpose = True
 
 # ########################################################### #
 # #                    Main application                     # #
@@ -246,8 +250,6 @@ def results(result_id):
 
 @app.route('/scan/sensor', methods=['GET', 'POST'])
 def sensor_login():
-    # TODO:
-    #    * Check why scanning doesn't work...
     if request.method == 'GET':
         return render_template('loader.html')
 
@@ -291,6 +293,38 @@ def student_login():
 
 
 # ########################################################### #
+# #                       Registration                      # #
+# ########################################################### #
+
+@app.route('/register', methods=['GET', 'POST'])
+def register_new_student():
+    if request.method == 'POST':
+        data = request.form
+        new_user = insert_new_student(data['fornavn'], data['etternavn'], data['studid'], data['epost'])
+        return redirect(url_for('register_new_student_card', user=new_user))
+    return render_template("register.html")
+
+
+@app.route('/register/card/<user>', methods=['GET', 'POST'])
+def register_new_student_card(user):
+    if request.method == ['GET']:
+        return render_template('loader.html')
+
+    if request.method == 'POST':
+        card = read()
+        while card is None:
+            pass
+
+        if card is False:
+            flash('You did not scan your card in time.')
+            return Response("fail", status=406, mimetype='application/json')
+
+        add_student_card(user, card)
+        flash('Your card was scanned successfully!')
+        return Response("done", status=200, mimetype='application/json')
+
+
+# ########################################################### #
 # #                  ONLY FOR OBS STUDIO!                   # #
 # ########################################################### #
 
@@ -303,7 +337,6 @@ def obs_status_change(room_id, command):
     return True
 
 
-# TODO
 # ########################################################### #
 # #                    Admin panel!                         # #
 # ########################################################### #
@@ -338,11 +371,42 @@ def tablet_config():
         return render_template('admin/tablet-control.html', rooms=room_list)
 
 
+@app.route("/obs", methods=['GET', 'POST'])
+def obs_room_control():
+    installed_rooms = obs_rooms_available()
+    return render_template('admin/obs-control.html', rdy=installed_rooms)
+
+
+@app.route("/obs/delete/<room_id>", methods=['POST'])
+def obs_delete_room(room_id):
+    if request.method == 'POST':
+        delete_obs_room_db(room_id)
+        return Response("done", status=200, mimetype='application/json')
+    else:
+        return Response("fail", status=406, mimetype='application/json')
+
+
+@app.route("/obs/add", methods=['POST'])
+def obs_add_new_room():
+    if request.method == 'POST':
+        name = request.form.get('validationName')
+        number = request.form.get('validationNumber')
+        ip = request.form.get('validationIP')
+        wall = request.form.get('validationWall')
+        pw = request.form.get('validationPassword')
+        add_new_room_to_db(name, number, ip, wall, pw)
+
+        flash('Rom er lagt til.', 'success')
+        return redirect(url_for('obs_room_control'))
+    else:
+        return redirect(url_for('obs_room_control'))
+
+
 @app.route("/admin/exams", methods=['GET', 'POST'])
 def admin_exams():
-        aex = get_active_exams()
-        dex = get_deactivated_exams()
-        return render_template('admin/exams.html', aex=aex, dex=dex)
+    aex = get_active_exams()
+    dex = get_deactivated_exams()
+    return render_template('admin/exams.html', aex=aex, dex=dex)
 
 
 @app.route("/admin/exams/<int:eid>/<int:funct>", methods=['GET'])
@@ -361,11 +425,43 @@ def admin_exams_switch(eid, funct):
         return redirect(url_for('admin_exams'))
 
 
-@app.route("/admin/exams/new")
+@app.route("/admin/exams/new", methods=['GET', 'POST'])
 def admin_exams_new():
     if request.method == 'POST':
-        pass
-    # TODO: Add exams add new page
+        data = request.form
+
+        # Exam Info
+
+        name = data['shortname']
+        outfit = data['outfit']
+        mincorr = data['min_correct']
+        time = "00:" + data['max_time'] + ":00"
+        desc = ""
+
+        description = find_replace_keys(data, "testdescription_")
+
+        for d in description:
+            if description[d]:
+                desc += str(description[d])
+                desc += "|"
+        desc = desc[:-1]
+
+        new_exam = admin_add_new_exam(name, desc, outfit, time, mincorr)
+
+        # Questions
+
+        # finds all that has the text "new_" in them
+        new_quest = find_replace_keys(data, "new_")
+        new_quest_imp = find_replace_keys(data, "i_ne_")
+
+        # if there are new questions, adds them to the database
+        if new_quest is not None:
+            for x in new_quest:
+                if new_quest[x]:
+                    add_new_questions(new_exam, new_quest[x], new_quest_imp[x])
+        flash_msg = f'Eksamen med navn: "{name}" er lagret'
+        flash(flash_msg, 'success')
+        return redirect(url_for('admin_exam_edit', ex_id=new_exam))
 
     return render_template('admin/view-exam.html')
 
@@ -375,18 +471,77 @@ def admin_exams_new_post():
     return redirect(url_for('admin_exams'))
 
 
-@app.route("/admin/exams/edit/<ex_id>")
+@app.route("/admin/exams/edit/<ex_id>", methods=['GET', 'POST'])
 def admin_exam_edit(ex_id):
-    # TODO: Add exams edit exam
-    return render_template('admin/view-exam.html', needs_hidden_field=True)
+    if request.method == 'POST':
+        data = request.form
+
+        # Exam Info
+
+        name = data['shortname']
+        outfit = data['outfit']
+        mincorr = data['min_correct']
+        time = "00:" + data['max_time'] + ":00"
+        desc = ""
+
+        description = find_replace_keys(data, "testdescription_")
+
+        for d in description:
+            if description[d]:
+                desc += str(description[d])
+                desc += "|"
+        desc = desc[:-1]
+
+        update_exam_info(name, desc, outfit, time, mincorr, ex_id)
+
+        # Questions
+
+        questions = find_replace_keys(data, "q_")
+        for e in questions:
+            update_questions_if_edited(str(e), questions[e])
+
+        # finds and replaces anything that starts with the text "important_"
+        res = find_replace_keys(data, "important_")
+        # updates every question with the correct important status.
+        for e in res:
+            update_important_questions(str(e), res[e])
+
+        # finds all that has the text "new_" in them
+        new_quest = find_replace_keys(data, "new_")
+        new_quest_imp = find_replace_keys(data, "i_ne_")
+
+        # if there are new questions, adds them to the database
+        if new_quest is not None:
+            for x in new_quest:
+                if new_quest[x]:
+                    add_new_questions(ex_id, new_quest[x], new_quest_imp[x])
+        return redirect(url_for('admin_exam_edit', ex_id=ex_id))
+        # return desc
+
+    exam = admin_get_exam_info(ex_id)
+    splitter = exam[3].split('|')
+    time = exam[5][3:-3]
+
+    questions = exam_get_questions(ex_id)
+    return render_template('admin/edit_exam.html', needs_hidden_field=True, exam=exam, info=splitter,
+                           questions=questions, time=time)
+
+
+@app.route("/question/delete/<qid>", methods=['POST'])
+def admin_delete_question(qid):
+    if request.method == 'POST':
+        db_delete_question(qid)
+        return Response("done", status=200, mimetype='application/json')
+    else:
+        return Response("fail", status=406, mimetype='application/json')
 
 
 # Sensors
 @app.route("/admin/users")
 def admin_users():
-    # TODO: Add admin page for sensors
-    #   Check only active or everyone
-    return render_template('admin/users.html')
+    usr = all_student_users()
+    tch = all_teacher_users()
+    return render_template('admin/users.html', usr=usr, tch=tch)
 
 
 @app.route("/admin/users/new")
@@ -448,6 +603,15 @@ def login_val():
         return False
 
 
+def find_replace_keys(data, p):
+    r = {key: val for key, val in data.items()
+         if key.startswith(p)}
+    # removes the text "specified in p", for easier querying.
+    r = {x.replace(p, ''): v
+         for x, v in r.items()}
+    return r
+
+
 def getList(dict):
     # Code fetched from GeeksForGeeks at https://www.geeksforgeeks.org/python-get-dictionary-keys-as-a-list/
     list = []
@@ -478,6 +642,17 @@ def selected_exam(exam, sensor):
 # ########################################################### #
 # #                     Full app reset!                     # #
 # ########################################################### #
+@app.route('/hidden/delete/function/that/is/hidden/<xid>')
+def hidden_delete_function_that_is_hidden(xid):
+    # Special function for actually deleting exams, should only be used for testing purpose.
+    if for_testing_purpose is True:
+        hidden_delete_function(xid)
+        x = f'Exam with id: {xid} has been deleted!'
+        return x
+    else:
+        redirect(url_for('splash'))
+
+
 @app.route('/install', methods=['GET'])
 def first_time_install():
     if session.get('tablet_unique_id') is None:
@@ -526,7 +701,8 @@ def not_found():
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
 
 
 # Starts the app on local network.

@@ -35,6 +35,13 @@ def insert_db(query, args=()):
     return c
 
 
+def _db(query, args=()):
+    cur = get_db().execute(query, args)
+    get_db().commit()
+    cur.close()
+    return True
+
+
 # ########################################################### #
 # #                     Teacher/Sensors                     # #
 # ########################################################### #
@@ -44,7 +51,7 @@ def sensors_list(x=None, i_a=False):
         get_sen = query_db('select * from users WHERE userType = 1')
     else:
         if i_a is True:
-            get_sen = query_db('select * from users where userType = 1 and is_active= 1;')
+            get_sen = query_db('select * from users where userType = 1 and isActive = 1;')
         else:
             get_sen = query_db('select * from users WHERE userType = 1')
     return get_sen
@@ -131,8 +138,9 @@ def get_single_result(result_id):
     r = query_db('SELECT results.res_id, results.case_id, results.date_completed, results.exam_id, results.answers, '
                  'results.sensor, results.is_exam, results.time_used, results.student, results.grade, '
                  'results.comment, results.start_time, results.stop_time, results.json, exams.shortname, '
-                 'exams.max_time FROM results LEFT JOIN exams on '
-                 'results.exam_id = exams.exam_id WHERE results.res_id = ?',
+                 'exams.max_time, users.first_name, users.last_name FROM results LEFT JOIN exams on '
+                 'results.exam_id = exams.exam_id LEFT JOIN users on results.student = users.user_id '
+                 'WHERE results.res_id = ?',
                  [result_id], one=True)
     return r
 
@@ -243,9 +251,9 @@ def obs_rooms_available():
     return q
 
 
-def add_new_room(room_name, room, ip, firewall, password):
-    query_db('INSERT INTO rooms(roomName, room, ip, firewall, password) VALUES (?)',
-             [room_name, room, ip, firewall, password], one=True)
+def add_new_room_to_db(room_name, room, ip, firewall, password):
+    _db('INSERT INTO rooms(roomName, room, ip, firewall, password) VALUES (?, ?, ?, ?, ?)',
+        [room_name, room, ip, firewall, password])
     return True
 
 
@@ -253,6 +261,12 @@ def get_room_info(room_id):
     q = query_db('SELECT * FROM rooms WHERE room = ?',
                  [room_id], one=True)
     return q
+
+
+def delete_obs_room_db(room_id):
+    _db('DELETE FROM rooms WHERE server_id = ?',
+        [room_id])
+    return True
 
 
 # ########################################################### #
@@ -290,7 +304,7 @@ def count_passed_exams():
 
 def last_30_day_count_per_day():
     count = []
-    for x in range(29):
+    for x in range(30):
         if x is 0:
             count.append(query_db('SELECT count(*) FROM results WHERE date(date_completed) == date("now")', one=True))
         elif x is 1:
@@ -318,12 +332,57 @@ def get_deactivated_exams():
 
 def activate_exam(x):
     insert_db('UPDATE exams SET is_active = 1 WHERE exam_id = ?',
-             [x])
+              [x])
 
 
 def deactivate_exam(x):
     insert_db('UPDATE exams SET is_active = 0 WHERE exam_id = ?',
-             [x])
+              [x])
+
+
+def admin_get_exam_info(ex_id):
+    q = query_db('SELECT * FROM exams WHERE exam_id = ?',
+                 [ex_id], one=True)
+    return q
+
+
+def update_questions_if_edited(key, val):
+    _db('UPDATE examquestions SET question = ? WHERE question_id = ?',
+        [val, key])
+    return True
+
+
+def update_important_questions(key, val):
+    _db('UPDATE examquestions SET important = ? WHERE question_id = ?',
+        [val, key])
+    return True
+
+
+def admin_add_new_exam(name, desc, outfit, time, mincorr):
+    q = insert_db('INSERT INTO exams(shortname, info, outfit, max_time, dateadded, is_active, min_correct)'
+                  'VALUES (?,?,?,?,date("now"),1,?)',
+                  [name, desc, outfit, time, mincorr])
+    return q
+
+
+def add_new_questions(exam, question, important):
+    q = insert_db('INSERT INTO examquestions(examID, question, important)'
+                  'VALUES (?,?,?)',
+                  [exam, question, important])
+    return q
+
+
+def db_delete_question(qid):
+    _db('DELETE FROM examquestions WHERE question_id = ?',
+        [qid])
+    return True
+
+
+def update_exam_info(name, desc, outfit, time, mincorr, eid):
+    _db('UPDATE exams SET shortname = ?, info = ?, outfit = ?, max_time = ?, min_correct = ?'
+        'WHERE exam_id = ?',
+        [name, desc, outfit, time, mincorr, eid])
+    return True
 
 
 # Results
@@ -332,6 +391,37 @@ def get_all_results():
                  'results.grade, exams.exam_id, exams.shortname, exams.max_time FROM results LEFT JOIN exams on '
                  'results.exam_id = exams.exam_id')
     return q
+
+
+# Users
+def all_student_users():
+    q = query_db('SELECT * FROM users WHERE userType=0 ORDER BY isActive DESC')
+    return q
+
+
+def all_teacher_users():
+    q = query_db('SELECT * FROM users WHERE userType>=1 ORDER BY isActive DESC')
+    return q
+
+
+# ########################################################### #
+# #                      Registration                       # #
+# ########################################################### #
+
+def insert_new_student(fname, lname, studid, email):
+    q = insert_db('INSERT INTO users(card_number, first_name, last_name, student_mail, student_id, exams_taken, '
+                  'exams_passed, exams_failed, practice_exams_done, isActive, userType)'
+                  'VALUES(0,?,?,?,?,0,0,0,0,1,0)',
+                  [fname, lname, email, studid])
+    if q is None:
+        return False
+    return q
+
+
+def add_student_card(user, card):
+    _db('UPDATE users SET card_number = ? WHERE user_id = ?',
+        [card, user])
+    return True
 
 
 # ########################################################### #
@@ -354,6 +444,14 @@ def delete_from_active_tablets(unique):
 # ########################################################### #
 # #                       Exceptions                        # #
 # ########################################################### #
+
+def hidden_delete_function(x):
+    _db('DELETE FROM exams WHERE exam_id = ?',
+        [x])
+    _db('DELETE FROM examquestions WHERE examID = ?',
+        [x])
+    return True
+
 
 def close_connection(exception):
     db = getattr(g, '_database', None)

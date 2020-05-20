@@ -66,6 +66,7 @@ CREATE TABLE active_exam (
 CREATE TABLE users (
     user_id integer PRIMARY KEY,
     card_number TEXT,
+    student_id integer,
     first_name TEXT,
     last_name TEXT,
     student_mail TEXT,
@@ -120,6 +121,12 @@ INSERT INTO questiontype(qtype)
 VALUES('Forberedelse'),
       ('Gjennomføring'),
       ('Etterarbeid');
+
+
+INSERT INTO userTypes(name,access)
+VALUES ('Student',0),
+       ('Sensor',1),
+       ('Admin',999);
 
 
 INSERT INTO exams (shortname, testdescription, info, outfit, max_time, dateadded, is_active, min_correct)

@@ -9,27 +9,35 @@
 {% block content %}
     <div class="main-content">
         <div class="breadcrumb">
-            <h1>Ny eksamen</h1>
+            <h1>Edit Exam</h1>
         </div>
         <div class="separator-breadcrumb border-top"></div>
         <!-- end of row-->
     <form method="POST">
         <div class="row mb-4">
-            <div class="col-sm-12 col-md-12 col-lg-5 col-xl-5 mt-3">
+            <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4 mt-3">
                 <div class="card">
                     <div class="card-body">
-                        <div class="card-title mb-2">Ny eksamen</div>
+                        <div class="card-title mb-2">{{ exam[1] }}</div>
 
+                            {% if needs_hidden_field != None %}
+                                <input type="hidden"
+                                       name="examID"
+                                       value="{{ exam[0] }}"
+                                       required />
+                            {% endif %}
                             <div class="form-group">
-                                <label for="shortname">Navn</label>
-                                <input class="form-control" id="shortname" name="shortname" type="text" aria-describedby="examHelp" placeholder="Navn på eksamen" value="" required><small class="form-text text-muted" id="shortnameHelp">Navn på eksamen.</small>
+                                <label for="shortname">{{ exam[1] }}</label>
+                                <input class="form-control" id="shortname" name="shortname" type="text" aria-describedby="examHelp" placeholder="Name of the exam" value="{{ exam[1] }}" required><small class="form-text text-muted" id="shortnameHelp">Name of the exam.</small>
                             </div>
-                    <div class="row mt-4" id="descBuilder">
+                    <div class="row" id="descBuilder">
                         <div class="col-sm-10">
                             <div class="form-group">
                                 <label for="testdescription">Info til studenten</label>
                                 <small class="form-text text-muted" id="descriptionHelp">Skriv in de forskjellige tingene elever trenger å vite. For å fjerne en rad, bare la raden stå tom.</small>
-                                <input class="form-control mb-3" id="testdescription" name="testdescription_1" type="text" aria-describedby="descriptionHelp" placeholder="Kort beskrivelse og tillegss informasjon om eksamenen" value="">
+                                {% for i in info %}
+                                    <input class="form-control mb-3" id="testdescription" name="testdescription_{{loop.index}}" type="text" aria-describedby="descriptionHelp" placeholder="Short description or additional info about exam" value="{{ i }}">
+                                {% endfor %}
 
                             </div>
                         </div>
@@ -40,15 +48,15 @@
                             <div class="row mb-12">
                                 <div class="col-lg-6 col-xl-6 mt-3 form-group">
                                     <label for="outfit">Antrekk</label>
-                                    <input class="form-control" id="outfit" name="outfit" type="text" aria-describedby="outfitHelp" placeholder="Antrekk" value="" required><small class="form-text text-muted" id="outfitHelp">Outfit the student should be using.</small>
+                                    <input class="form-control" id="outfit" name="outfit" type="text" aria-describedby="outfitHelp" placeholder="Enter the outfit" value="{{ exam[4] }}" required><small class="form-text text-muted" id="outfitHelp">Outfit the student should be using.</small>
                                 </div>
                                 <div class="col-lg-3 col-xl-3 mt-3 form-group">
                                     <label for="min_correct">Minimum riktig</label>
-                                    <input class="form-control" id="min_correct" name="min_correct" type="number" min="0" max="255" aria-describedby="minCorrectHelp" placeholder="Minimum riktig" value="" required><small class="form-text text-muted" id="minCorrectHelp">Minimum riktig for å bestå. Ex: 7</small>
+                                    <input class="form-control" id="min_correct" name="min_correct" type="number" aria-describedby="minCorrectHelp" placeholder="Enter the minimum amount of correct questions to pass" value="{{ exam[8] }}" required><small class="form-text text-muted" id="minCorrectHelp">Minimum correct to pass. Ex: 7</small>
                                 </div>
                                 <div class="col-lg-3 col-xl-3 mt-3 form-group">
                                     <label for="max_time">Tid:</label>
-                                    <input class="form-control" id="max_time" name="max_time" type="number" min="0" max="255" aria-describedby="max_timeHelp" placeholder="Maksimum tid som kan brukes" value="" required><small class="form-text text-muted" id="max_timeHelp">Maksimum tid som kan brukes. Ex: 15</small>
+                                    <input class="form-control" id="max_time" name="max_time" type="number" aria-describedby="max_timeHelp" placeholder="Enter the maximum time" value="{{ time }}" required><small class="form-text text-muted" id="max_timeHelp">Maksimum tid som kan brukes. Ex: 15</small>
                                 </div>
                             </div>
 
@@ -63,11 +71,27 @@
                                 <div class="col-sm-2">Viktig?</div>
                         </div>
                         <div class="row" id="formBuilder">
+                            <div class="col-lg-12 form-group">
+                                {% for q in questions %}
+                                    <div class="row mb-3" id="alert-confirm-{{ q[0] }}">
+                                        <div class="col-sm-9">
+                                            <label for="question{{ q[0] }}">Spørsmål {{ q[0] }}:</label>
+                                            <input class="form-control" id="question{{ q[0] }}" name="q_{{ q[0] }}" type="text" value="{{ q[3] }}" placeholder="Spørsmål">
+                                            <small class="form-text- text-muted">{{ q[3] }}</small>
+                                        </div>
+                                        <div class="col-sm-3 pt-4 text-center">
+                                                <input class="position-static mr-3" style="width: 28px;height: 28px;" type="checkbox" name="important_{{ q[0] }}" id="checkbox_{{ q[0] }}" value="1" {% if q[6] == 1 %}checked{% endif %}>
+                                                <input type="hidden" name="important_{{ q[0] }}" value="0" />
+                                                <span class="badge badge-round-danger ml-5" style="text-align:center;padding: 1.5px;" onclick="ask_delete({{ q[0] }})"><i class="i-Close-Window text-22"></i></span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
 
 
                         <div class="border-top mt-4"></div>
-                        <input type="button" value="Nytt spørsmål" class="btn btn-secondary mt-3" id="add" />
+                        <input type="button" value="Add a new question" class="btn btn-secondary mt-3" id="add" />
                     </div>
                 </div>
             </div>
@@ -81,6 +105,7 @@
 {% block script %}
     <script src="{{ url_for('static', filename='admin/js/plugins/datatables.min.js') }}"></script>
     <script src="{{ url_for('static', filename='admin/js/scripts/datatables.script.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/plugins/sweetalert2.min.js') }}"></script>
 
 
 <script type="text/javascript">
@@ -113,11 +138,11 @@
             cid++;
         });
 
-        let did = 2;
+        let did = {{info|length}};
         $("#add_desc").click(function() {
-            const fieldWrapper = $("<div class=\"col-lg-12 form-group row\" id=\"field" + did + "\"/>");
+            const fieldWrapper = $("<div class=\"col-lg-12 form-group row\" id=\"field" + (did+1) + "\"/>");
             fieldWrapper.data("idx", did+1);
-            const fName = $("<div class=\"col-sm-10 mt-3\"><input type=\"text\" class=\"form-control\" name='testdescription_"+ did +"' value=''/></div>");
+            const fName = $("<div class=\"col-sm-10 mt-3\"><input type=\"text\" class=\"form-control\" name='testdescription_"+ (did+1) +"' value=''/></div>");
 
             const removeButton = $("<div class=\"col-sm-1 mt-3\"><input class=\"btn btn-outline-danger m-1\" type=\"button\" value=\" - \" style='margin: 0!important;float:right;'></div>");
             removeButton.click(function() {
@@ -131,9 +156,30 @@
         });
 
     });
+
+    function ask_delete(id) {
+        swal({
+          title: 'Er du sikker på at du vil slette spørsmål nr: '+ id +'?',
+          text: "Det er ikke mulig å endre dette!",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#0CC27E',
+          cancelButtonColor: '#FF586B',
+          confirmButtonText: 'Ja, slett den!',
+          cancelButtonText: 'Nei, Avbryt!',
+          confirmButtonClass: 'btn btn-success mr-5',
+          cancelButtonClass: 'btn btn-danger',
+          buttonsStyling: false
+        }).then(function () {
+            $.post('/question/delete/'+id);
+          swal('Deleted!', 'Rommet er slettet.', 'success');
+          let elem = document.getElementById('alert-confirm-'+id);
+          elem.parentNode.removeChild(elem)
+        })
+        }
     </script>
 {% endblock %}
 
 {% block styles %}
+    <link href="{{ url_for('static', filename='admin/css/plugins/sweetalert2.min.css') }}" rel="stylesheet">
 {% endblock %}
-

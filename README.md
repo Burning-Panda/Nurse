@@ -19,17 +19,21 @@ obs-websocket - Remote-control OBS Studio from WebSockets
 
 ### Installing
 
-To run this program should be installed as a single file on a SD card.
-But if you want to run it on another server you need to install Flask, Requests, asyncio, mfrc522, sqlite3.
+It is recommended you install the ISO file on a sd card, and not installing everything yourself.
 
+But if you want to run it on another server you need to install Flask, Requests, asyncio, mfrc522, sqlite3.  
+Check requirements.txt for detailed info about required files and software.
+
+
+**Installation for specific systems**  
 Each of these can be installed by running this command in windows 10
 ```
-pip install flask requests asyncio mfrc522
+pip install flask requests asyncio
 ```
 
 or if you are on a linux based OS.
 ```
-sudo pip3 install flask requests asyncio mfrc522
+sudo pip3 install flask requests asyncio
 ```
 
 For sqlite you install it with
@@ -37,14 +41,14 @@ For sqlite you install it with
 sudo apt-get install sqlite3
 ```
 
-Check requirements.txt for detailed info about required files and software.
+If you want to use RFID scanner, install mfrc522 with pip.
 
 **Web-server**  
 This program should be run with uWSGI and Nginx for optimal performance and load balancing.
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+For first time installation go to __IP__/install (ex 192.168.0.1/install)  
 
 ### Break down into end to end tests
 

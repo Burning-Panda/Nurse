@@ -3,7 +3,7 @@
 {% block active %}usrs{% endblock %}
 
 {% block title %}
-    Admin > Users
+    Admin > Brukere
 {% endblock %}
 
 {% block content %}
@@ -20,49 +20,46 @@
         <div class="col-sm-12 col-md-7 mb-3">
             <div class="card text-left">
                 <div class="card-body">
-                    <h4 class="card-title mb-4 mt-2 float-left">Students </h4>
-                    <button class="btn btn-outline-success mt-0 mb-4 float-right" type="button">Ny student</button>
+                    <h4 class="card-title mb-4 mt-2 float-left">Studenter </h4>
+                    <button class="btn btn-outline-success mt-0 mb-3 float-right" type="button" id="with-html"><i class="i-Add text-16"></i> Ny student</button>
                     <div class="table-responsive border-top pt-2">
                         <table class="display table table-striped table-bordered dataTable" id="stud_table" style="width:100%" role="grid">
                             <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Card ID</th>
-                                <th scope="col">Exams Completed</th>
-                                <th scope="col">Last exam completed</th>
+                                <th scope="col">Navn</th>
+                                <th scope="col">Kort Nummer</th>
+                                <th scope="col">Eksamener fullført</th>
+                                <th scope="col">Siste eksamen fullført</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Action</th>
+                                <th scope="col">Handling</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Lars Larson</td>
-                                <td>0000000000</td>
-                                <td>30</td>
-                                <td>Exam Name</td>
-                                <td><span class="badge badge-success">Enabled</span></td>
-                                <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Per Person</td>
-                                <td>1111111111</td>
-                                <td>300</td>
-                                <td>Exam Name</td>
-                                <td><span class="badge badge-danger r-badge">Disabled</span></td>
-                                <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-success mr-2" href="#"><i class="nav-icon i-Yes font-weight-bold"></i></a></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>Watson Watch</td>
-                                <td>222222222</td>
-                                <td>49</td>
-                                <td>Exam Name</td>
-                                <td><span class="badge badge-danger r-badge">Disabled</span></td>
-                                <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
-                            </tr>
+                            {% for u in usr %}
+                                <tr>
+                                    <th>{{ u[0] }}</th>
+                                    <td>{{ u[2] }} {{ u[3] }}</td>
+                                    <td>{{ u[1] }}</td>
+                                    <td>{{ u[6] }}</td>
+                                    <td>?</td>
+                                    <td>
+                                        {% if u[9] == 1 %}
+                                            <span class="badge badge-success">Aktiver</span>
+                                        {% else %}
+                                            <span class="badge badge-danger r-badge">Deaktiver</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i> Rediger</a>
+                                        {% if u[9] == 0 %}
+                                            <a class="text-success mr-2" href="#"><i class="nav-icon i-Yes font-weight-bold"></i> Aktiver</a>
+                                        {% else %}
+                                            <a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i> Deaktiver</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -73,7 +70,7 @@
         <div class="col-sm-12 col-md-5 mb-3">
             <div class="card text-left">
                 <div class="card-body">
-                    <h4 class="card-title mb-3 mt-2 float-left">Teachers </h4>
+                    <h4 class="card-title mb-3 mt-2 float-left">Lærere </h4>
                     <button class="btn btn-outline-success mt-0 mb-3 float-right" type="button"><i class="i-Add text-16"></i> Ny lærer</button>
                     <div class="table-responsive border-top pt-2">
                         <div id="" class="dataTables_wrapper container-fluid dt-bootstrap4">
@@ -83,43 +80,43 @@
                                         <thead>
                                         <tr role="row">
                                             <th scope="col">#</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Card ID</th>
+                                            <th scope="col">Navn</th>
+                                            <th scope="col">Kort Nummer</th>
                                             <th scope="col">Status</th>
-                                            <th scope="col">Action</th>
+                                            <th scope="col">Handling</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>Lars Larson</td>
-                                            <td>0000000000</td>
-                                            <td><span class="badge badge-success">Enabled</span></td>
-                                            <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">2</th>
-                                            <td>Per Person</td>
-                                            <td>1111111111</td>
-                                            <td><span class="badge badge-danger r-badge">Disabled</span></td>
-                                            <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">3</th>
-                                            <td>Watson Watch</td>
-                                            <td>222222222</td>
-                                            <td><span class="badge badge-danger r-badge">Disabled</span></td>
-                                            <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
-                                        </tr>
-                                        </tbody>
-                                        <tfoot>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Card ID</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
+
+                                        {% for u in tch %}
+                                            <tr>
+                                                <th>{{ u[0] }}</th>
+                                                <td>
+                                                    {% if u[10] > 1 %}
+                                                        <span class="badge badge-round-dark m-1" aria-details="Admin">A</span>
+                                                    {% endif %}
+                                                    {{ u[2] }} {{ u[3] }}
+                                                </td>
+                                                <td>{{ u[1] }}</td>
+                                                <td>
+                                                    {% if u[9] == 1 %}
+                                                        <span class="badge badge-success">Aktivert</span>
+                                                    {% else %}
+                                                        <span class="badge badge-danger r-badge">Deaktivert</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i> Rediger</a>
+                                                    {% if u[9] == 0 %}
+                                                        <a class="text-success mr-2" href="#"><i class="nav-icon i-Yes font-weight-bold"></i> Aktiver</a>
+                                                    {% else %}
+                                                        <a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i> Deaktiver</a>
+                                                    {% endif %}
+
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+
                                         </tfoot>
                                     </table>
                                 </div>
@@ -133,12 +130,14 @@
     <!-- end of main-content -->
     </div>
 </div>
+    <form></form>
 {% endblock %}
 
 {% block script %}
     <script src="{{ url_for('static', filename='admin/js/plugins/datatables.min.js') }}"></script>
     <script src="{{ url_for('static', filename='admin/js/scripts/datatables.script.min.js') }}"></script>
 
+    <script src="{{ url_for('static', filename='admin/js/plugins/sweetalert2.min.js') }}"></script>
     <script>
         $(document).ready(function () {
             $('#teach_table').DataTable({
@@ -153,6 +152,36 @@
                 "info": false
             }); // ordering or sorting
         });
+
+    $('#with-html').on('click', function () {
+            swal({
+          title: 'Legg til ny student: ',
+          html: '<label for="fname">Fornavn</label>' +
+                '<input id="fname" class="swal2-input">' +
+                '<label for="lname">Etternavn</label>' +
+                '<input id="lname" class="swal2-input">' +
+                '<label for="studid">Student nummer</label>' +
+                '<input id="studid" class="swal2-input">' +
+                '<label for="email">epost</label>' +
+                '<input id="email" class="swal2-input">',
+          showCancelButton: true,
+          confirmButtonColor: '#0CC27E',
+          cancelButtonColor: '#FF586B',
+          confirmButtonText: 'Lagre!',
+          cancelButtonText: 'Avbryt!',
+          confirmButtonClass: 'btn btn-success mr-5',
+          cancelButtonClass: 'btn btn-danger',
+          buttonsStyling: false
+        }).then(function () {
+            $.post('/admin/new/student', {
+                fname: document.getElementById('fname').value,
+                lname: document.getElementById('lname').value,
+                studid: document.getElementById('studid').value,
+                email: document.getElementById('email').value
+            });
+          swal('Lagret!', 'Student er lagret', 'success');
+        })
+    })
     </script>
 {% endblock %}
 
@@ -165,6 +194,7 @@
     </style>
 {% endblock %}
 
-</body>
 
-</html>
+{% block styles %}
+    <link href="{{ url_for('static', filename='admin/css/plugins/sweetalert2.min.css') }}" rel="stylesheet">
+{% endblock %}

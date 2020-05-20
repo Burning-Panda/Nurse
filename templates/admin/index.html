@@ -70,8 +70,8 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card mb-4">
-                        <div class="card-body p-0">{{ last30days }}
-                            <h5 class="card-title m-0 p-3">Siste 30 dagene med tester gjennomført</h5>
+                        <div class="card-body p-0">
+                            <h5 class="card-title m-0 p-3">Antall tester gjennomført de siste 30 dagene</h5>
                             <div id="echart3" style="height: 360px;"></div>
                         </div>
                     </div>
@@ -106,6 +106,46 @@
     <script src="{{ url_for('static', filename='admin/js/plugins/echarts.min.js') }}"></script>
 
     <script src="{{ url_for('static', filename='admin/js/scripts/echart.option.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='admin/js/scripts/dashboard.js') }}"></script>
+
+    <script>
+
+
+
+    $(document).ready(function() {
+    // Chart in Dashboard version 1
+    let echartElem3 = document.getElementById('echart3');
+    if (echartElem3) {
+        let echart3 = echarts.init(echartElem3);
+        echart3.setOption({
+            ...echartOptions.lineNoAxis,
+            ... {
+                series: [{
+                    data: [
+                        {% for last in last30days %}
+            {{ last[0] }},
+        {% endfor %}],
+                    lineStyle: {
+                        color: 'rgba(102, 51, 153, 0.8)',
+                        width: 3,
+                        ...echartOptions.lineShadow
+                    },
+                    label: { show: true, color: '#212121' },
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: {
+                        borderColor: 'rgba(102, 51, 153, 1)'
+                    }
+                }]
+            }
+        });
+        $(window).on('resize', function() {
+            setTimeout(() => {
+                echart3.resize();
+            }, 500);
+        });
+    }
+
+});
+    </script>
 
 {% endblock %}

@@ -17,62 +17,48 @@
         </div>
         <div class="separator-breadcrumb border-top"></div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-12 col-lg-5">
                 <div class="card mb-4">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Legg til ny OBS PC</h4>
-                        <form class="needs-validation" novalidate="novalidate">
-                            <div class="form-row">
-                                <div class="col-md-9 mb-3">
-                                    <label for="validationName">Navn på rom</label>
-                                    <input class="form-control" id="validationName" type="text" placeholder="Room name" value="" required="required">
-                                    <div class="valid-feedback">
-                                        Looks good!
+                        <form method="POST" id="add_new_obs" action="{{ url_for('obs_add_new_room') }}">
+                            <fieldset>
+                                <div class="form-row">
+                                    <div class="col-md-9 mb-3">
+                                        <label for="validationName">Navn på rom</label>
+                                        <input class="form-control" id="validationName" name="validationName" type="text" placeholder="Room name" value="" required>
                                     </div>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label for="validationNumber">room</label>
-                                    <input class="form-control" id="validationNumber" type="number" placeholder="1" value="" required="required">
-                                    <div class="valid-feedback">
-                                        Looks good!
+                                    <div class="col-md-3 mb-3">
+                                        <label for="validationNumber">room</label>
+                                        <input class="form-control" id="validationNumber" name="validationNumber" type="number" placeholder="1" value="" required>
 
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="col-md-9 mb-3">
-                                    <label for="validationIP">IP</label>
-                                    <div class="input-group">
-                                        <input class="form-control" id="validationIP" type="text" placeholder="IP: 192.168.1.1" required="required">
-                                        <div class="invalid-feedback">
-                                            Please choose a IP.
+                                <div class="form-row">
+                                    <div class="col-md-9 mb-3">
+                                        <label for="validationIP">IP</label>
+                                        <div class="input-group">
+                                            <input class="form-control" id="validationIP" name="validationIP" type="text" placeholder="IP: 192.168.1.1" value="" required>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label for="validationWall">Open Firewall</label>
-                                    <input class="form-control" id="validationWall" type="number" placeholder="4444" required="required">
-                                    <div class="invalid-feedback">
-                                        Please provide a valid firewall code.
+                                    <div class="col-md-3 mb-3">
+                                        <label for="validationWall">Open Firewall</label>
+                                        <input class="form-control" id="validationWall" name="validationWall" type="number" placeholder="4444" value="" required>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="col-md-12 mb-3">
-                                    <label for="validationPassword">Passord</label>
-                                    <input class="form-control" id="validationPassword" type="password" placeholder="*****" required="required">
-                                    <div class="invalid-feedback">
-                                        Please provide a valid password.
-
+                                <div class="form-row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="validationPassword">Passord</label>
+                                        <input class="form-control" id="validationPassword" name="validationPassword" type="password" value="" required>
                                     </div>
                                 </div>
-                            </div>
-                            <button class="btn btn-primary float-right" type="submit" onclick="addOBSControllers();">Add new</button>
+                            </fieldset>
+                            <input type="submit" value="Legg til" class="btn btn-primary float-right">
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12 col-lg-7">
                 <div class="card mb-4">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Aktive OBS PC'er</h4>
@@ -89,30 +75,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Lab 4</td>
-                                    <td>192.168.1.1</td>
-                                    <td>4444</td>
-                                    <td>***********</td>
-                                    <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Lab 4</td>
-                                    <td>192.168.1.1</td>
-                                    <td>4444</td>
-                                    <td>***********</td>
-                                    <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>Lab 4</td>
-                                    <td>192.168.1.1</td>
-                                    <td>4444</td>
-                                    <td>***********</td>
-                                    <td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>
-                                </tr>
+                                {% for room in rdy %}
+                                    <tr id="alert-confirm-{{ room[0] }}">
+                                        <th scope="row">{{ room[0] }}</th>
+                                        <td>{{ room[1] }}</td>
+                                        <td>{{ room[3] }}</td>
+                                        <td>{{ room[4] }}</td>
+                                        <td>{{ room[5] }}</td>
+                                        <td>
+                                            <a class="text-success mr-4" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i> Edit</a>
+                                            <a class="text-danger cursor-pointer" onclick="delete_room({{ room[0] }})"><i class="nav-icon i-Close-Window font-weight-bold"></i> DELETE</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
                                 </tbody>
                             </table>
                         </div>
@@ -124,20 +100,30 @@
 {% endblock %}
 
 {% block script %}
+    <script src="{{ url_for('static', filename='admin/js/plugins/sweetalert2.min.js') }}"></script>
     <script>
-        function addOBSControllers() {
-            $("#obsControllers tbody").append(
-                '<tr>' +
-                '<th scope="row">1</th>' +
-                '<td>Lab 4</td>' +
-                '<td>192.168.1.1</td>' +
-                '<td>4444</td>' +
-                '<td>***********</td>' +
-                '<td><a class="text-success mr-2" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a class="text-danger mr-2" href="#"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td></tr>'
-            );
-        };
-        $(document).ready(function () {
-            addOBSControllers();
-        });
+        function delete_room(id) {
+        swal({
+          title: 'Er du sikker?',
+          text: "Det er ikke mulig å endre dette!",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#0CC27E',
+          cancelButtonColor: '#FF586B',
+          confirmButtonText: 'Ja, slett den!',
+          cancelButtonText: 'Nei, Avbryt!',
+          confirmButtonClass: 'btn btn-success mr-5',
+          cancelButtonClass: 'btn btn-danger',
+          buttonsStyling: false
+        }).then(function () {
+            $.post('/obs/delete/'+id);
+          swal('Deleted!', 'Rommet er slettet.', 'success');
+          let elem = document.getElementById('alert-confirm-'+id);
+          elem.parentNode.removeChild(elem)
+        })
+        }
     </script>
+{% endblock %}
+{% block styles %}
+    <link href="{{ url_for('static', filename='admin/css/plugins/sweetalert2.min.css') }}" rel="stylesheet">
 {% endblock %}

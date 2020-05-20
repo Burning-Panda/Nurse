@@ -1,3 +1,4 @@
+<!-- Lisens ligger i folderen Lisens > ADMIN_PANEL -->
 <!DOCTYPE html>
 <html lang="en" dir="">
 <head>
@@ -9,6 +10,8 @@
     <link href="{{ url_for('static', filename='admin/css/themes/lite-purple.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='admin/css/plugins/perfect-scrollbar.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='admin/css/plugins/datatables.min.css') }}" rel="stylesheet">
+
+{% block styles %}{% endblock %}
 </head>
 
 <body class="text-left">
@@ -32,38 +35,28 @@
     <div class="side-content-wrap">
         <div class="sidebar-left open rtl-ps-none" data-perfect-scrollbar="" data-suppress-scroll-x="true">
             <ul class="navigation-left">
-                <li class="nav-item" id="index"><a class="nav-item-hold" href="{{ url_for('admin_main') }}"><i class="nav-icon i-Bar-Chart"></i><span class="nav-text">Dashboard</span></a>
+                <li class="nav-item" id="index"><a class="nav-item-hold" href="{{ url_for('admin_main') }}"><i class="nav-icon i-Bar-Chart"></i><span class="nav-text">Oversikt</span></a>
                     <div class="triangle"></div>
                 </li>
-                <li class="nav-item" id="a_exams"><a class="nav-item-hold" href="{{ url_for('admin_exams') }}"><i class="nav-icon i-Library"></i><span class="nav-text">Exams</span></a>
-                    <div class="triangle"></div>
-                </li>
-                <li class="nav-item" id="tbl_conf"><a class="nav-item-hold" href="{{ url_for('tablet_config') }}"><i class="nav-icon i-File-Clipboard-File--Text"></i><span class="nav-text">Tablet Config</span></a>
+                <li class="nav-item" id="a_exams"><a class="nav-item-hold" href="{{ url_for('admin_exams') }}"><i class="nav-icon i-Library"></i><span class="nav-text">Eksamener</span></a>
                     <div class="triangle"></div>
                 </li>
                 <li class="nav-item" id="answers"><a class="nav-item-hold" href="{{ url_for('admin_responses') }}"><i class="nav-icon i-File-Horizontal-Text"></i><span class="nav-text">Svar</span></a>
                     <div class="triangle"></div>
                 </li>
-                <li class="nav-item" id="usrs" data-item="users"><a class="nav-item-hold" href="{{ url_for('admin_users') }}"><i class="nav-icon i-Administrator"></i><span class="nav-text">Users</span></a>
+                <li class="nav-item" id="usrs"><a class="nav-item-hold" href="{{ url_for('admin_users') }}"><i class="nav-icon i-Administrator"></i><span class="nav-text">Brukere</span></a>
                     <div class="triangle"></div>
                 </li>
-                <li class="nav-item" id="obs_cont" data-item="others"><a class="nav-item-hold" href="{{ url_for('admin_exams') }}"><i class="nav-icon i-Double-Tap"></i><span class="nav-text">OBS PCer</span></a>
+                <li class="nav-item" id="obs_cont"><a class="nav-item-hold" href="{{ url_for('obs_room_control') }}"><i class="nav-icon i-Double-Tap"></i><span class="nav-text">PCer</span></a>
+                    <div class="triangle"></div>
+                </li>
+                <li class="nav-item" id="tbl_conf"><a class="nav-item-hold" href="{{ url_for('tablet_config') }}"><i class="nav-icon i-File-Clipboard-File--Text"></i><span class="nav-text">Tablet Instillinger</span></a>
                     <div class="triangle"></div>
                 </li>
             </ul>
         </div>
 
         <div class="sidebar-left-secondary rtl-ps-none" data-perfect-scrollbar="" data-suppress-scroll-x="true">
-            <ul class="childNav" data-parent="users">
-                <li class="nav-item"><a href="../sessions/signin.html"><i class="nav-icon i-Checked-User"></i><span class="item-name">Add new</span></a></li>
-                <li class="nav-item"><a href="../sessions/signup.html"><i class="nav-icon i-Add-User"></i><span class="item-name">Sign up</span></a></li>
-                <li class="nav-item"><a href="../sessions/forgot.html"><i class="nav-icon i-Find-User"></i><span class="item-name">Forgot</span></a></li>
-            </ul>
-            <ul class="childNav" data-parent="others">
-                <li class="nav-item"><a href="../sessions/not-found.html"><i class="nav-icon i-Error-404-Window"></i><span class="item-name">Not Found</span></a></li>
-                <li class="nav-item"><a href="user.profile.html"><i class="nav-icon i-Male"></i><span class="item-name">User Profile</span></a></li>
-                <li class="nav-item"><a class="open" href="blank.html"><i class="nav-icon i-File-Horizontal"></i><span class="item-name">Blank Page</span></a></li>
-            </ul>
         </div>
         <div class="sidebar-overlay"></div>
     </div>
@@ -92,7 +85,7 @@
             <script>
                 {% for category, message in messages %}
                 $(document).ready(function () {
-                    toastr.{{ category }}("{{ message }}", "Slow Duration", {
+                    toastr.{{ category }}("{{ message }}", "Success", {
                         hideDuration: 3000
                     });
                 });
