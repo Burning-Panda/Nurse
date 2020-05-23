@@ -395,24 +395,52 @@ def get_all_results():
 
 # Users
 def all_student_users():
-    q = query_db('SELECT * FROM users WHERE userType=0 ORDER BY isActive DESC')
+    q = query_db('SELECT * FROM users WHERE userType=1 ORDER BY isActive DESC')
     return q
 
 
 def all_teacher_users():
-    q = query_db('SELECT * FROM users WHERE userType>=1 ORDER BY isActive DESC')
+    q = query_db('SELECT * FROM users WHERE userType>=2 ORDER BY isActive DESC')
     return q
+
+
+def get_user_types():
+    q = query_db('SELECT id, name FROM userTypes')
+    return q
+
+
+def edit_user(uid):
+    q = query_db('SELECT * FROM users WHERE user_id = ?',
+                 [uid])
+    return q
+
+
+def admin_update_user(fname, lname, utype, email, pw, studid, card):
+    _db('INSERT INTO users(card_number, student_id, first_name, last_name, student_mail, '
+        'userType, password)'
+        'VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
+        [card, studid, fname, lname, email, utype, pw])
+    return None
+
+
+def activate_user(x):
+    insert_db('UPDATE users SET isActive = 1 WHERE user_id = ?',
+              [x])
+
+
+def deactivate_user(x):
+    insert_db('UPDATE users SET isActive = 0 WHERE user_id = ?',
+              [x])
 
 
 # ########################################################### #
 # #                      Registration                       # #
 # ########################################################### #
-
-def insert_new_student(fname, lname, studid, email):
-    q = insert_db('INSERT INTO users(card_number, first_name, last_name, student_mail, student_id, exams_taken, '
-                  'exams_passed, exams_failed, practice_exams_done, isActive, userType)'
-                  'VALUES(0,?,?,?,?,0,0,0,0,1,0)',
-                  [fname, lname, email, studid])
+def register_new_user(fname, lname, utype, email, pw, studid, card):
+    q = insert_db('INSERT INTO users(card_number, student_id, first_name, last_name, student_mail, exams_taken,'
+                  'exams_passed, exams_failed, practice_exams_done, isActive, userType, password)'
+                  'VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
+                  [card, studid, fname, lname, email, 0, 0, 0, 0, 1, utype, pw])
     if q is None:
         return False
     return q
@@ -421,6 +449,12 @@ def insert_new_student(fname, lname, studid, email):
 def add_student_card(user, card):
     _db('UPDATE users SET card_number = ? WHERE user_id = ?',
         [card, user])
+    return True
+
+
+def add_student_card_with_studid(card, studid):
+    _db('UPDATE users SET card_number = ? WHERE student_id = ?',
+        [card, studid])
     return True
 
 

@@ -125,7 +125,7 @@ VALUES('Forberedelse'),
 
 INSERT INTO userTypes(name,access)
 VALUES ('Student',0),
-       ('Sensor',1),
+       ('Lærer',1),
        ('Admin',999);
 
 

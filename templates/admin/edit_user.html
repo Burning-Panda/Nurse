@@ -1,0 +1,92 @@
+{% extends "admin/template.html" %}
+
+{% block active %}usrs{% endblock %}
+
+{% block title %}
+    Ny Bruker
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <div class="breadcrumb">
+            <h1>Ny eksamen</h1>
+        </div>
+        <div class="separator-breadcrumb border-top"></div>
+        <!-- end of row-->
+<form method="POST">
+    <div class="row mb-4">
+        <div class="col-sm-12 col-md-12 col-lg-5 col-xl-5 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title mb-2">Rediger Bruker</div>
+
+                    <div class="form-group">
+                        <label for="usertype">Velg hvilken type bruker dette er:</label>
+                        <select id="usertype" class="form-control" name="usertype">
+                            {% for t in utype %}
+                                <option id="o_{{ t[0] }}" value="{{ t[0] }}" {% if u[11] == t[0] %}selected{% endif %} >{{ t[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fname">Fornavn</label>
+                        <input class="form-control" id="fname" name="fname" type="text" aria-describedby="fnameHelp" placeholder="Fornavn" value="{{ u[3] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lname">Etternavn</label>
+                        <input class="form-control" id="lname" name="lname" type="text" aria-describedby="lnameHelp" placeholder="Etternavn" value="{{ u[4] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mail">NTNU epost addresse</label>
+                        <input class="form-control" id="mail" name="mail" type="email" aria-describedby="mailHelp" placeholder="mail@ntnu.no" value="{{ u[5] }}" required>
+                    </div>
+                    <div id='studiddiv' class="form-group">
+                        <label for="studid">Student Nummer</label>
+                        <input class="form-control" id="studid" name="studid" type="number" min="0" aria-describedby="studidHelp" placeholder="Student Nr" value="{{ u[2] }}" required>
+                        <small class="form-text text-muted" id="studidHelp">Student nummeret er et sett med tall man kan se på student appen.</small>
+                    </div>
+
+
+                    <div id="new_user">
+                        <input type="hidden" name="pass" value="False">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary float-right mt-3 text-20" style="position: fixed;right: 15%;top: 90px;" type="submit">Lagre</button>
+</form>
+        </div>
+{% endblock %}
+
+{% block script %}
+
+
+<script>
+    $(document).ready(function () {
+            $("#usertype").on('change', function() {
+                let selector = $("#usertype option:selected").val()
+                if (selector === '3') {
+                    $("#new_user").prepend("<div class=\"form-group\" id='password'>\n" +
+                        "<label for=\"pass\">Passord</label>\n" +
+                        "<input class=\"form-control\" id=\"pass\" name=\"pass\" type=\"password\" aria-describedby=\"passHelp\" placeholder=\"Passord\" value=\"{{ u[12] }}\" required>\n" +
+                        "</div>");
+                } else if (selector === '2') {
+                    $("#password").remove()
+                    $("#studiddiv").remove()
+                } else {
+                    $("#password").remove()
+                    $("#new_user").prepend("<div id='studiddiv' class=\"form-group\">\n" +
+                        "<label for=\"studid\">Student Nummer</label>\n" +
+                        "<input class=\"form-control\" id=\"studid\" name=\"studid\" type=\"number\" min='0' aria-describedby=\"studidHelp\" placeholder=\"Student Nr\" value=\"{{ u[2] }}\" required>\n" +
+                        "<small class=\"form-text text-muted\" id=\"studidHelp\">Student nummeret er et sett med tall man kan se på student appen.</small>\n" +
+                    "</div>")
+                }
+            })
+    })
+</script>
+{% endblock %}
+
+{% block styles %}
+{% endblock %}

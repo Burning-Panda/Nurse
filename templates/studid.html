@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.4.min.css') }}">
+
+    <title>Fix my card!</title>
+  </head>
+  <body>
+  <div class="container">
+      <div class="row mt-5">
+          <div class="col-sm-10 offset-1">
+              <h2>Legg til student kortet</h2>
+              <form method="POST" class="mt-5">
+                  <div class="form-group">
+                    <label for="studnbr">Student Nummer</label>
+                    <input type="number" class="form-control" id="studnbr" name="studnbr" aria-describedby="studnbrHelp" placeholder="Skriv in student nummeret ditt">
+                    <small id="studnbrHelp" class="form-text text-muted">Student nummeret ditt er en rekke tall du kan finne på "Student ID" appen, eller på student kortet ditt under teksten "STUDENTNR"</small>
+                  </div>
+                  <button type="submit" class="btn btn-secondary float-right">Submit</button>
+                </form>
+          </div>
+      </div>
+  </div>
+  </body>
+</html>

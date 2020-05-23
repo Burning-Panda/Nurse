@@ -25,11 +25,13 @@ app.permanent_session_lifetime = timedelta(days=365)  # max time the session is 
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 
 auth_key = 'Yv326fIgqRoZocoYo5jjU0OAR_rJe6LpzCkbAr6F'
+
 # End Config
 app.debug = True
 
 
 for_testing_purpose = True
+
 
 # ########################################################### #
 # #                    Main application                     # #
@@ -73,6 +75,9 @@ def choose_exam():
         form_data = request.form
         return redirect(url_for('exam_choice', exam_id=form_data['exams']))
     else:
+        if session.get('room') is None:
+            flash('Ingen rom er valgt, venligst gi denne padden til Hans Martin Lilleby')
+            return redirect(url_for('splash'))
         if session.get('sensor'):
             s = session['sensor']
         else:
@@ -300,8 +305,18 @@ def student_login():
 def register_new_student():
     if request.method == 'POST':
         data = request.form
-        new_user = insert_new_student(data['fornavn'], data['etternavn'], data['studid'], data['epost'])
-        return redirect(url_for('register_new_student_card', user=new_user))
+        fname = data['fname']
+        lname = data['lname']
+        utype = 1
+        email = data['mail']
+
+        pw = 0
+        studid = data['studid']
+        card = 0
+        # card = read()
+
+        register_new_user(fname, lname, utype, email, pw, studid, card)
+        return redirect(url_for('splash'))
     return render_template("register.html")
 
 
@@ -321,6 +336,37 @@ def register_new_student_card(user):
 
         add_student_card(user, card)
         flash('Your card was scanned successfully!')
+        return Response("done", status=200, mimetype='application/json')
+
+
+@app.route('/fix', methods=['GET', 'POST'])
+def studid_fix_card():
+    if request.method == 'GET':
+        return render_template('studid.html')
+
+    if request.method == 'POST':
+        studid = request.form.get('studnbr')
+        return redirect(url_for('fix_missing_card', studid=studid))
+
+    else:
+        redirect(url_for('splash'))
+
+
+@app.route('/fix/missing/card/<studid>', methods=['GET','POST'])
+def fix_missing_card(studid):
+    if request.method == ['GET']:
+        return render_template('loader.html')
+    if request.method == 'POST':
+        card = read()
+        while card is None:
+            pass
+
+        if card is False:
+            flash('You did not scan your card in time.')
+            return Response("fail", status=406, mimetype='application/json')
+
+        add_student_card_with_studid(card, studid)
+        flash('Your card was added successfully!')
         return Response("done", status=200, mimetype='application/json')
 
 
@@ -346,13 +392,15 @@ def admin_main():
     ax = count_all_completed_exams()
     l30d = count_all_last_30_days()
     l24d = count_last_24_hours()
+    passed = count_passed_exams()
 
+    # Adds all data into a single list before being sent to the index page.
     websiteStrings = []
 
     websiteStrings.append(ax[0])
     websiteStrings.append(l30d[0])
     websiteStrings.append(l24d[0])
-    websiteStrings.append(ax[0])
+    websiteStrings.append(passed[0])
 
     countL30D = last_30_day_count_per_day()
 
@@ -486,11 +534,12 @@ def admin_exam_edit(ex_id):
 
         description = find_replace_keys(data, "testdescription_")
 
+        # Puts the description fields into a string for easier storage.
         for d in description:
             if description[d]:
                 desc += str(description[d])
                 desc += "|"
-        desc = desc[:-1]
+        desc = desc[:-1]  # This removes the last | from the string.
 
         update_exam_info(name, desc, outfit, time, mincorr, ex_id)
 
@@ -544,16 +593,73 @@ def admin_users():
     return render_template('admin/users.html', usr=usr, tch=tch)
 
 
-@app.route("/admin/users/new")
+@app.route("/admin/users/new", methods=['GET', 'POST'])
 def admin_new_users():
-    # TODO: Add a way to add new Users
-    return render_template('admin/users.html')
+    if request.method == 'POST':
+        data = request.form
+        fname = data['fname']
+        lname = data['lname']
+        utype = data['usertype']
+        email = data['mail']
+
+        pw = 0
+        studid = 0
+        card = 0
+
+        if int(utype) is 1:
+            studid = data['studid']
+
+        if int(utype) is 3:
+            pw = data['pass']
+
+        register_new_user(fname, lname, utype, email, pw, studid, card)
+        return redirect(url_for('admin_users'))
+
+    utype = get_user_types()
+    return render_template('admin/new_user.html', utype=utype)
 
 
 @app.route("/admin/users/edit/<uid>")
 def admin_user_edit(uid):
-    # TODO: Add a way to edit the Users or delete
-    return render_template('admin/users.html')
+    if request.method == 'POST':
+        data = request.form
+        fname = data['fname']
+        lname = data['lname']
+        utype = data['usertype']
+        email = data['mail']
+
+        pw = 0
+        studid = 0
+        card = 0
+
+        if int(utype) is 1:
+            studid = data['studid']
+
+        if int(utype) is 3:
+            pw = data['pass']
+
+        admin_update_user(fname, lname, utype, email, pw, studid, card)
+        return redirect(url_for('admin_users'))
+
+    utype = get_user_types()
+    eu = edit_user(uid)
+    return render_template('admin/edit_user.html', utype=utype, u=eu)
+
+
+@app.route("/admin/users/<int:eid>/<int:funct>", methods=['GET'])
+def admin_users_switch(eid, funct):
+    error = None
+    if funct == 1:
+        activate_user(eid)
+        flash(f'You successfully activated the user with id: {eid}', 'success')
+        return redirect(url_for('admin_exams'))
+    elif funct == 0:
+        deactivate_user(eid)
+        flash(f'You successfully deactivated a user with id: {eid}', 'success')
+        return redirect(url_for('admin_exams'))
+    else:
+        flash(f'Server error, do not worry. Please try again.', 'error')
+        return redirect(url_for('admin_exams'))
 
 
 @app.route("/admin/results")
@@ -593,15 +699,13 @@ def login_admin():
 
 
 # ########################################################### #
-# #                     Functions!                          # #
+# #                         Login                           # #
 # ########################################################### #
 
-def login_val():
-    if session.get('is_auth') == auth_key:
-        return True
-    else:
-        return False
 
+# ########################################################### #
+# #                     Functions!                          # #
+# ########################################################### #
 
 def find_replace_keys(data, p):
     r = {key: val for key, val in data.items()
