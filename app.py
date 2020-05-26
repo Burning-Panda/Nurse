@@ -244,9 +244,9 @@ def results(result_id):
 
     # Simplifies the grade for reading purpose.
     if result[9] is not 1:
-        grade = 'FAILED'
+        grade = 'IKKE BESTÅTT'
     else:
-        grade = 'PASSED'
+        grade = 'BESTÅTT'
 
     session_reset()
     return render_template('results.html', r=result, exam_info=info_to_student, p=zipped, grade=grade)
