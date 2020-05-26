@@ -1,0 +1,41 @@
+{% extends "global.html" %}
+{% block title %}
+    Registrer ny bruker
+{% endblock %}
+
+
+{% block styles %}
+{% endblock %}
+
+
+{% block script %}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+    <h1>Registrer ny bruker</h1>
+    <form method="POST" class="">
+      <div class="row">
+        <div class="col-md">
+          <label for="fornavn">Fornavn</label>
+          <input type="text" name="fornavn" id="fornavn" class="form-control" required>
+        </div>
+        <div class="col">
+          <label for="etternavn">Etternavn</label>
+          <input type="text" name="etternavn" id="etternavn" class="form-control" required>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-xl">
+          <label for="studid">Student ID nummer</label>
+          <input type="text" name="studid" id="studid" class="form-control" required>
+        </div>
+        <div class="col-xl mt-4">
+          <label for="epost">E-post</label>
+          <input type="text" name="epost" id="epost" class="form-control" required>
+        </div>
+      </div>
+      <button type="submit" class="mt-4 float-right btn btn-secondary">Gå Videre</button>
+    </form>
+  </div>
+{% endblock %}

@@ -82,8 +82,13 @@ def choose_exam():
             s = session['sensor']
         else:
             s = 'None'
+
+        if session.get('student'):
+            st = session['student']
+        else:
+            st = 'None'
         avb_tests = get_available_exams()
-        return render_template('exams.html', exams=avb_tests, sensor=s)
+        return render_template('exams.html', exams=avb_tests, sensor=s, student=st)
 
 
 @app.route('/exam/<int:exam_id>')
@@ -143,6 +148,10 @@ def tasks(exam):
             session['sensor'] = 0
         if session.get('is_exam') is None:
             session['is_exam'] = 0
+        if session.get('student') is None:
+            student = 0
+        else:
+            student = session.get('student')
 
         # gets the session data and stores it into a variable. Lessens chance of errors.
         case_id = session['case']
@@ -179,7 +188,7 @@ def tasks(exam):
         text_grade = str(grade)
 
         # Inserts result and returns the last inserted ID for the redirection to the next page.
-        ins = insert_result(case_id, exam, answers, st_time, text_grade, ie, active_sensor, dump)
+        ins = insert_result(case_id, exam, answers, st_time, text_grade, ie, active_sensor, dump, student)
 
         obs_status_change(get_room, 'stop')
         # if grade is 0:

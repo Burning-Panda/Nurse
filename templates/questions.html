@@ -1,6 +1,6 @@
 {% extends "global.html" %}
 {% block title %}
-    Select Exams
+    Oppgaver
 {% endblock %}
 
 
@@ -56,3 +56,38 @@
     </form>
 </div>
 {% endblock %}
+
+
+<div class="container-fluid">
+    <h1> -- exam navn -- </h1>
+    <div class="row mb-3">
+        {% for q in question %}
+            <div class="col-md-9 offset-md-1">
+                {% if q[6] == 1 %}
+                    <b>{{ q[3] }}</b>
+                {% else %}
+                    {{ q[3] }}
+                {% endif %}
+            </div>
+            <div class="col-md-2">
+                <input type="checkbox"
+                       name="{{ q[0] }}"
+                       id="exam_{{ q[1] }}_q_{{ q[0] }}_a_1"
+                       class="checkbox"
+                       value="1"
+                       style="width: 2rem;height: 2rem;"/>
+                <input type="hidden"
+                       name="{{ q[0] }}"
+                       value="0" />
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="row">
+        <div class="col mt-3">
+            <p>Avslutt opptak og fortsett til neste side for å kunne skrive in en kommentar.</p>
+        </div>
+    </div>
+    <button type="submit" class="mt-4 float-right btn btn-secondary">Avslutt opptak</button>
+</div>

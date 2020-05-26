@@ -1,0 +1,30 @@
+{% extends "global.html" %}
+{% block title %}
+    Kommentar
+{% endblock %}
+
+
+{% block styles %}
+{% endblock %}
+
+
+{% block script %}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="comment">Skriv en ekstra kommentar til deltakeren:</label>
+                    <textarea class="form-control" rows="5" id="comment"></textarea>
+                </div>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary">
+                    Lagre og fortsett
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

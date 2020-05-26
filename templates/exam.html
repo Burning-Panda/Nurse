@@ -19,26 +19,7 @@
     </div>
     <div class="container">
 
-       <div class="row">
-            <div class="title">{{ exam[1] }}</div>
-            <div class="description">
-                <ul class="desc">
-                    {% for x in desc %}
-                        <li>{{ x }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-       </div>
 
-        <div class="outfit">
-            <b>Outfit:</b> {{ exam[4] }}
-        </div>
-        <div class="time">
-            <b>Max allowed time:</b> {{ exam[5] }} minutes.
-        </div>
-        <div class="min_corr">
-            <b>Minimum Correct to pass:</b> {{ exam[8] }}
-        </div>
     </div>
     <div class="case">
         <h2>Case</h2>
@@ -54,3 +35,59 @@
         </p>
     </div>
 {% endblock %}
+
+<div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h2> -- valgt eksamen -- </h2>
+                <p>
+                    Les opp eller vis denne informasjonen til deltakeren. Når beskrivelsen er lest og forstått returner iPad til
+                    eksaminator/makker.
+                </p>
+                <p>
+                    Når Padden er returnert kan eksamintor/makker trykke på "Start Test" og opptaket vil begynne.
+                </p>
+                <div class="card card-block">
+                    <div class="card-header">
+                        <p>
+                            Informasjon til Student:
+                        </p>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="title">{{ exam[1] }}</div>
+                            <div class="description">
+                                <ul class="desc">
+                                    {% for x in desc %}
+                                        <li>{{ x }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                       </div>
+
+                        <div class="outfit">
+                            <b>Outfit:</b> {{ exam[4] }}
+                        </div>
+                        <div class="time">
+                            <b>Max allowed time:</b> {{ exam[5] }} minutes.
+                        </div>
+                        <div class="min_corr">
+                            <b>Minimum Correct to pass:</b> {{ exam[8] }}
+                        </div>
+
+
+
+                    </div>
+                    <div class="card-footer">
+                        <p>
+                            Når du starter testen; husk å snakke klart og tydelig. Del gjerne også tankeprosessen din underveis og forklar hvorfor du gjør det du gjør.
+                        </p>
+                        <button class="btn btn-primary">
+                            Start Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -151,7 +151,7 @@ def only_questions(e):
     return r
 
 
-def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor, json):
+def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor, json, student):
     now = datetime.now()
     time_used = str(now - start_time)
 
@@ -163,8 +163,8 @@ def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor,
     gr = int(grade)
     ie = int(is_exam)
     se = str(sensor)
+    stu = int(student)
 
-    stu = 0
     comment = None
 
     con = insert_db('INSERT INTO results'
