@@ -6,7 +6,6 @@ from flask import Flask, render_template, url_for, redirect, request, session, R
 from datetime import timedelta, datetime, date
 import json
 import uuid
-import babel
 
 # Import from helper files
 from helpers.database import *
@@ -29,7 +28,6 @@ auth_key = 'Yv326fIgqRoZocoYo5jjU0OAR_rJe6LpzCkbAr6F'
 
 # End Config
 app.debug = True
-
 
 for_testing_purpose = True
 
@@ -61,10 +59,8 @@ def splash():
     return render_template("index.html", homepage=True)
 
 
-@app.route('/exams', methods=['POST', 'GET'])
+@app.route('/exams', methods=['GET'])
 def choose_exam():
-    # TODO:
-    #   * Waiting for Chris / Kay
     """
     Gets the website for all exams, checks database for what exams is available.
     if :Method GET:  Gets the website and loads exams from the database.
@@ -72,24 +68,22 @@ def choose_exam():
     :return:
     """
 
-    if request.method == "POST":
-        form_data = request.form
-        return redirect(url_for('exam_choice', exam_id=form_data['exams']))
+    if session.get('room') is None:
+        flash('Ingen rom er valgt, venligst gi denne padden til Hans Martin Lilleby')
+        return redirect(url_for('splash'))
+    if session.get('sensor'):
+        s = session['sensor']
     else:
-        if session.get('room') is None:
-            flash('Ingen rom er valgt, venligst gi denne padden til Hans Martin Lilleby')
-            return redirect(url_for('splash'))
-        if session.get('sensor'):
-            s = session['sensor']
-        else:
-            s = 'None'
+        s = 'None'
 
-        if session.get('student'):
-            st = session['student']
-        else:
-            st = 'None'
-        avb_tests = get_available_exams()
-        return render_template('exams.html', exams=avb_tests, sensor=s, student=st)
+    if session.get('student'):
+        st = session['student']
+    else:
+        st = 'None'
+
+    avb_tests = get_available_exams()
+
+    return render_template('exams.html', exams=avb_tests, sensor=s, student=st)
 
 
 @app.route('/exam/<int:exam_id>')
@@ -105,6 +99,10 @@ def exam_choice(exam_id):
     case = get_case(1)
     session['case'] = 1
 
+    time = ex_info[5].split(':')
+    time = time[1]
+
+
     gender = case[1]
     if gender == 1:
         g = 'Mann'
@@ -112,7 +110,8 @@ def exam_choice(exam_id):
         g = 'Kvinne'
 
     splitter = ex_info[3].split('|')
-    return render_template('exam.html', exam_id=exam_id, exam=ex_info, desc=splitter, case=case, gender=g)
+    return render_template('exam.html', exam_id=exam_id, exam=ex_info, desc=splitter, case=case, gender=g,
+                           time=time)
 
 
 @app.route('/exam/<int:exam>/in-progress', methods=['POST', 'GET'])
@@ -206,7 +205,7 @@ def tasks(exam):
         return render_template('questions.html', question=q, exam=exam)
 
 
-@app.route('/results/<result_id>/comment')
+@app.route('/results/<result_id>/comment', methods=['GET', 'POST'])
 def comment(result_id):
     # TODO:
     #  * Wait for correct template from Chris / Kay
@@ -219,30 +218,36 @@ def comment(result_id):
     # Check if the user wants a comment
     if request.method == "POST":
         form_data = request.form
-        want_comment = form_data['comment']
-        result_with_comment(str(want_comment))
-        return redirect(url_for(results, id=result_id))
+
+        dump = json.dumps(form_data)
+        result_with_comment(dump, result_id)
+
+        return redirect(url_for('results', result_id=result_id))
+
     else:
-        # return render_template('comment.html', id=result_id)
-        return render_template('results.html')  # , id=result_id)
+        return render_template('comment.html', r=result_id)
 
 
 @app.route('/results/<result_id>')
 def results(result_id):
-    # TODO: Create the results page.
-    #   * make sure the correct students are the only ones who can read it
-    #     scan card to access?
-
     result = get_single_result(result_id)
     answers = result[4].split('|')
+    comments = json.loads(result[10])
 
     exam_info = get_exam_info(result[3])
     info_to_student = exam_info[3].split('|')
+    if result[5] is not '0':
+        sensor = get_sensor_from_card(result[5])
+    else:
+        sensor = None
 
     questions = exam_get_questions(result[3])
 
     zipped = zip(questions, answers)
-    dated = convert_date(result[2])
+    conv_dated = convert_date(result[2])
+    dated = conv_dated.strftime("%d %b, %Y")
+
+    time_used = result[7].split('.')
 
     # Simplifies the grade for reading purpose.
     if result[9] is not 1:
@@ -251,7 +256,8 @@ def results(result_id):
         grade = 'BESTÅTT'
 
     session_reset()
-    return render_template('results.html', r=result, exam_info=info_to_student, exam=exam_info[1], date=dated, p=zipped, grade=grade)
+    return render_template('results.html', r=result, exam_info=info_to_student, exam=exam_info[1], date=dated, p=zipped,
+                           grade=grade, sensor=sensor, time=time_used[0], comment=comments)
 
 
 # ########################################################### #
@@ -316,57 +322,41 @@ def student_login():
 def register_new_student():
     if request.method == 'POST':
         data = request.form
-        fname = data['fname']
-        lname = data['lname']
+        fname = data['fornavn']
+        lname = data['etternavn']
         utype = 1
-        email = data['mail']
+        email = data['epost']
 
         pw = 0
         studid = data['studid']
-        card = 0
-        # card = read()
 
-        register_new_user(fname, lname, utype, email, pw, studid, card)
-        return redirect(url_for('splash'))
+        new_user = register_new_user(fname, lname, utype, email, pw, studid)
+        return redirect(url_for('register_new_student_card', user=new_user))
     return render_template("register.html")
 
 
 @app.route('/register/card/<user>', methods=['GET', 'POST'])
 def register_new_student_card(user):
-    if request.method == ['GET']:
-        return render_template('loader.html')
+    return render_template('card_fixer.html', type=order, aids=user)
 
+
+@app.route('/fix/<order>', methods=['GET', 'POST'])
+def studid_fix_card(order, user=None):
     if request.method == 'POST':
-        card = read()
-        while card is None:
-            pass
-
-        if card is False:
-            flash('You did not scan your card in time.')
-            return Response("fail", status=406, mimetype='application/json')
-
-        add_student_card(user, card)
-        flash('Your card was scanned successfully!')
-        return Response("done", status=200, mimetype='application/json')
-
-
-@app.route('/fix', methods=['GET', 'POST'])
-def studid_fix_card():
-    if request.method == 'GET':
-        return render_template('studid.html')
-
-    if request.method == 'POST':
-        studid = request.form.get('studnbr')
-        return redirect(url_for('fix_missing_card', studid=studid))
+        identity = request.form.get('studnbr')
+        return redirect(url_for('fixing', identity=identity, order=order))
 
     else:
-        redirect(url_for('splash'))
+        return render_template('studid.html')
 
 
-@app.route('/fix/missing/card/<studid>', methods=['GET','POST'])
-def fix_missing_card(studid):
-    if request.method == ['GET']:
-        return render_template('loader.html')
+@app.route('/dont/worry/im/working/on/it/<identity>/<order>')
+def fixing(identity, order):
+    return render_template('card_fixer.html', type=order, aids=identity)
+
+
+@app.route('/do_the_fixing/<int:order>/<int:aid>', methods=['GET', 'POST'])
+def do_the_fixing(order, aid):
     if request.method == 'POST':
         card = read()
         while card is None:
@@ -376,9 +366,17 @@ def fix_missing_card(studid):
             flash('You did not scan your card in time.')
             return Response("fail", status=406, mimetype='application/json')
 
-        add_student_card_with_studid(card, studid)
+        if order is 1:
+            add_student_card_with_studid(card[0], aid)
+        elif order is 2:
+            add_student_card(aid, card[0])
+        else:
+            flash('Something went wrong')
+            return Response("fail", status=406, mimetype='application/json')
         flash('Your card was added successfully!')
         return Response("done", status=200, mimetype='application/json')
+    else:
+        return redirect(url_for('splash'))
 
 
 # ########################################################### #
@@ -630,7 +628,7 @@ def admin_new_users():
     return render_template('admin/new_user.html', utype=utype)
 
 
-@app.route("/admin/users/edit/<uid>")
+@app.route("/admin/users/edit/<uid>", methods=['GET', 'POST'])
 def admin_user_edit(uid):
     if request.method == 'POST':
         data = request.form
@@ -651,10 +649,10 @@ def admin_user_edit(uid):
 
         admin_update_user(fname, lname, utype, email, pw, studid, card)
         return redirect(url_for('admin_users'))
-
-    utype = get_user_types()
-    eu = edit_user(uid)
-    return render_template('admin/edit_user.html', utype=utype, u=eu)
+    else:
+        utype = get_user_types()
+        eu = edit_user(uid)
+        return render_template('admin/edit_user.html', utype=utype, u=eu)
 
 
 @app.route("/admin/users/<int:eid>/<int:funct>", methods=['GET'])
@@ -689,9 +687,28 @@ def admin_responses_single(rid):
 
     questions = exam_get_questions(result[3])
 
+    conv_dated = convert_date(result[2])
+    dated = conv_dated.strftime("%d %b, %Y")
+
+    time_used = result[7].split('.')
+
+    if result[5] is not '0':
+        sensor = get_sensor_from_card(result[5])
+    else:
+        sensor = None
+
+    # This makes sure the database entry has the correct format, makes it more secure.
+    # If it doesn't have the correct format, it sends empty strings to the webpage.
+    if is_json(result[10]):
+        comments = json.loads(result[10])
+    else:
+        comments = {'good': '', 'bad': '', 'other': ''}
+
+
     zipped = zip(questions, answers)
 
-    return render_template('admin/view-answers.html', r=result, exam_info=info_to_student, p=zipped)
+    return render_template('admin/view-answers.html', r=result, exam_info=info_to_student, p=zipped, comment=comments,
+                           date=dated, tu=time_used[0], sensor=sensor)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -759,6 +776,14 @@ def convert_date(date_time):
     datetime_str = datetime.strptime(date_time, format)
 
     return datetime_str
+
+
+def is_json(string):
+    try:
+        json_object = json.loads(string)
+    except ValueError as e:
+        return False
+    return True
 
 
 # ########################################################### #

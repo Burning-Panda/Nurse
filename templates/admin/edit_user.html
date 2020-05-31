@@ -9,7 +9,7 @@
 {% block content %}
     <div class="main-content">
         <div class="breadcrumb">
-            <h1>Ny eksamen</h1>
+            <h1>Rediger bruker: {{ u[3] }} {{ u[4] }}</h1>
         </div>
         <div class="separator-breadcrumb border-top"></div>
         <!-- end of row-->
@@ -39,11 +39,6 @@
                     <div class="form-group">
                         <label for="mail">NTNU epost addresse</label>
                         <input class="form-control" id="mail" name="mail" type="email" aria-describedby="mailHelp" placeholder="mail@ntnu.no" value="{{ u[5] }}" required>
-                    </div>
-                    <div id='studiddiv' class="form-group">
-                        <label for="studid">Student Nummer</label>
-                        <input class="form-control" id="studid" name="studid" type="number" min="0" aria-describedby="studidHelp" placeholder="Student Nr" value="{{ u[2] }}" required>
-                        <small class="form-text text-muted" id="studidHelp">Student nummeret er et sett med tall man kan se på student appen.</small>
                     </div>
 
 

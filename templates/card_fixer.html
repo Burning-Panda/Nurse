@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Please scan your card</title>
+    <link rel="stylesheet" type="text/css" href="../static/loader.css">
+</head>
+<body>
+
+<h1>Please scan your card</h1>
+<h3></h3>
+
+<div class='loader loader1'>
+  <div>
+    <div>
+      <div>
+        <div>
+          <div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    const request = new XMLHttpRequest();
+    {% if type == '1' %}
+        request.open('POST', '{{ url_for('do_the_fixing', order=type, aid=aids) }}');
+    {% elif type == '2' %}
+        request.open('POST', '{{ url_for('do_the_fixing', order=type , aid=aids) }}');
+    {% endif %}
+
+    request.onload = function() {
+        if (request.status === 200 && request.responseText === 'done') {
+            // long process finished successfully, redirect user
+            window.location = '/exams';
+        } else if (request.status ===406 && request.responseText === 'fail') {
+            window.location = '/';
+        } else {
+            // ops, we got an error from the server
+            alert('ops, we got an error from the server.');
+        }
+    };
+
+    request.onerror = function() {
+        // ops, we got an error trying to talk to the server
+        alert('ops, we got an error trying to talk to the server.');
+    };
+
+    request.send();
+</script>
+
+</body>
+</html>

@@ -13,17 +13,45 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="form-group">
-                    <label for="comment">Skriv en ekstra kommentar til deltakeren:</label>
-                    <textarea class="form-control" rows="5" id="comment"></textarea>
-                </div>
-            </div>
-            <div class="col">
-                <button class="btn btn-primary">
-                    Lagre og fortsett
-                </button>
+        <div class="row mt-2">
+            <h2 class="ml-2">Skriv kommentar til studenten.</h2>
+            <div class="col-12 mt-4">
+                <form method="POST" id="result_comment">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <h5>
+                                    <label for="good">Ting som er gjort bra:</label>
+                                </h5>
+                                <textarea class="form-control" rows="4" name="good" id="good"></textarea>
+                            </div>
+
+                            <div class="form-group mt-4">
+                                <h5>
+                                    <label for="bad">Ting som må forbedres:</label>
+                                </h5>
+                                <textarea class="form-control" rows="4" name="bad" id="bad"></textarea>
+                            </div>
+
+                            <div class="form-group mt-4">
+                                <h5>
+                                    <label for="other">Andre kommentarer:</label>
+                                </h5>
+                                <textarea class="form-control" rows="4" id="other" name="other"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <a href="{{ url_for('results', result_id=r) }}">Hopp over og gå til resultat</a>
+                        </div>
+                        <div class="col text-right">
+                            <button type="submit" class="btn btn-primary">
+                                Lagre og gå til resultat
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

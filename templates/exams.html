@@ -15,32 +15,33 @@
 
 {% block content %}
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h4>Velg oppgave</h4>
+    <div class="row mt-4">
+        <div class="col-11">
+            <h4>Velg en passeringstest</h4>
         </div>
-        <div class="col-12">
-            <p>velg en oppgave fra listen:</p>
+        <div class="col-1 text-right">
+            <a href="{{ url_for('splash') }}" class="text-secondary">Avbryt</a>
         </div>
-        <div class="card-columns">
+    </div>
+    <div class="row mt-3">
             {% for exam in exams %}
+                <div class="col-6 mt-3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">
                         {{ exam[1] }}
                     </h5>
                     <p class="card-teks">
-                        Maks tid: {{ exam[5] }}
-                        Minimum antall riktig: {{ exam[8] }}
+                        Tidsramme: {{ exam[5] }}<br>
+                        Minimum poengsum: {{ exam[8] }}
                     </p>
                 </div>
-                <div class="card-footer">
-                    <a href="{{ url_for('exam_choice', exam_id=exam[0]) }}"
-                        class="btn btn-primary active float-right mb-2" role="button" aria-pressed="true">Velg</a>
+                <div class="card-footer text-right">
+                    <a href="{{ url_for('exam_choice', exam_id=exam[0]) }}" class="btn btn-primary active mb-2" role="button" aria-pressed="true">Velg</a>
                 </div>
             </div>
+                </div>
             {% endfor %}
-        </div>
     </div>
 </div>
 

@@ -126,7 +126,7 @@ VALUES('Forberedelse'),
 INSERT INTO userTypes(name,access)
 VALUES ('Student',0),
        ('Lærer',1),
-       ('Admin',999);
+       ('Admin',666);
 
 
 INSERT INTO exams (shortname, testdescription, info, outfit, max_time, dateadded, is_active, min_correct)
@@ -276,7 +276,7 @@ INSERT INTO exams (shortname, testdescription, info, outfit, max_time, dateadded
 VALUES (
         'Endotrakeal intubasjon',
         'OSCE, AIO MAN4000 Intubasjon',
-        'Studenten skal forberede til intubasjon og gjennomføre et intubasjonsforsøk.|Intubatøren skal selv lytte og verifisere korrekt tubeleie","Øsofagusintubasjon aksepteres, men dette må oppdages og studenten må angi at  prosedyren avsluttes og maskeventilasjon gjenopptas.|Må forklare gangen i en innledning, men testes kun i forberedelse og  gjennomføring av selve intubasjonsprosedyren',
+        'Studenten skal forberede til intubasjon og gjennomføre et intubasjonsforsøk.|Intubatøren skal selv lytte og verifisere korrekt tubeleie|Øsofagusintubasjon aksepteres, men dette må oppdages og studenten må angi at  prosedyren avsluttes og maskeventilasjon gjenopptas.|Må forklare gangen i en innledning, men testes kun i forberedelse og  gjennomføring av selve intubasjonsprosedyren',
         'Korrekt arbeidsantrekk',
         '00:10:00',
         datetime('now', 'localtime'),
@@ -456,7 +456,7 @@ INSERT INTO exams (shortname, testdescription, info, outfit, max_time, dateadded
 VALUES (
         'Arteriekran, kalibrering og blodprøvetaking',
         'OSCE, AIO MIN4000 /MAN4000 arteriekran  0-ing og blodprøvetaking',
-        'Kaliberering av arteriekran til atmosfærisk trykk","Blodprøvetaking fra arteriekran|Kan forklare hvordan koblinger håndteres korrekt ved daglig bruk',
+        'Kaliberering av arteriekran til atmosfærisk trykk|Blodprøvetaking fra arteriekran|Kan forklare hvordan koblinger håndteres korrekt ved daglig bruk',
         'Korrekt arbeidsantrekk',
         '00:15:00',
         datetime('now', 'localtime'),

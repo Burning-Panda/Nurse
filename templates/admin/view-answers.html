@@ -33,11 +33,11 @@
         <div class="separator-breadcrumb border-top"></div>
         <!-- end of row-->
         <div class="row mb-4">
-            <div class="col-md-6 mb-4">
+            <div class="col-8 mb-4">
                 <div class="card text-left">
                     <div class="card-body">
                         <div class="row mb-5">
-                            <div class="col-md-8 col-auto mr-auto">
+                            <div class="col-8 col-auto mr-auto">
                                 <h3 class="pb-2 border-bottom">{{ r[14] }}</h3>
                                 <ul class="mt-4">
                                     {% for i in exam_info %}
@@ -45,13 +45,13 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-                            <div class="col-md-4 text-right col-auto" style="max-width:160px;">
+                            <div class="col-4 text-right col-auto" style="max-width:160px;">
                                 <div class="row align-items-end">
                                     <table class="col small">
                                         <tbody>
                                             <tr><th>Student ID:</th><td>{{ r[8] }}</td></tr>
                                             <tr><th>Result ID:</th><td>{{ r[0] }}</td></tr>
-                                            <tr><th>Date:</th><td>{{ r[2] }}</td></tr>
+                                            <tr><th>Date:</th><td>{{ date }}</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -88,7 +88,7 @@
                                 {% endfor %}
                                 <tr>
                                     <th></th>
-                                    <td>Tid brukt: {{ r[7] }}</td>
+                                    <td>Tid brukt: {{ tu }}</td>
                                     <td></td>
                                 </tr>
                                 </tbody>
@@ -102,10 +102,12 @@
                             </table>
                         </div>
                         <div class="row mb-4 pt-4 border-top">
-                            <div class="col-md-4">
-                                <b>Sensor:</b> Navn Navnesen
-                            </div>
-                            <div class="col-md-4 text-center">
+                            {% if sensor != None %}
+                                <div class="col-4">
+                                    <b>Sensor:</b> {{ sensor[1] }} {{ sensor[2] }}
+                                </div>
+                            {% endif %}
+                            <div class="col-4 text-center">
                                 <span class="text-19 font-weight-bold">
                                     {% if r[9] == 1 %}
                                         Bestått
@@ -115,13 +117,46 @@
                                 </span>
                             </div>
                         </div>
-                    {% if r[9] != 1 %}
-                        <div class="row justify-content-center">
-                            <div class="col-md-11 border p-3">
-                                {{ r[10] }}
-                            </div>
-                        </div>
-                    {% endif %}
+
+                        <div class="row mt-4 pt-4"><div class="col mt-3 pt-3">
+                            {% if r[10] != None %}
+                                <div class="row">
+                                    <div class="col">
+                                    <h5>Ting som er gjort bra:</h5>
+                                        {% if comment['good'] %}
+                                            {{ comment['good'] }}
+                                        {% else %}
+                                            Ingen Kommentar
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4 mb-4 pt-3 pb-3 border-bottom border-top">
+                                    <div class="col">
+                                    <h5>Ting som må forbedres:</h5>
+
+                                        {% if comment['bad'] %}
+                                            {{ comment['bad'] }}
+                                        {% else %}
+                                            Ingen Kommentar
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                    <h5>
+                                       Andre kommentarer:
+                                    </h5>
+                                    {% if comment['other'] %}
+                                            {{ comment['other'] }}
+                                        {% else %}
+                                            Ingen Kommentar
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div> </div>
                     </div>
                 </div>
             </div>

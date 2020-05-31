@@ -57,6 +57,18 @@ def sensors_list(x=None, i_a=False):
     return get_sen
 
 
+def get_single_sensor(s):
+    q = query_db('SELECT * FROM users WHERE user_id = ?',
+                 [s], one=True)
+    return q
+
+
+def get_sensor_from_card(card):
+    q = query_db('SELECT user_id, first_name, last_name FROM users WHERE card_number = ?',
+                 [card], one=True)
+    return q
+
+
 def sensor_exists(card):
     access_id = query_db('select * from users where card_number = ?',
                          [card], one=True)
@@ -177,8 +189,8 @@ def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor,
 
 
 def result_with_comment(comment, res_id):
-    insert_db('UPDATE results SET comment = ? WHERE res_id = ?',
-              [comment, res_id])
+    _db('UPDATE results SET comment = ? WHERE res_id = ?',
+        [comment, res_id])
 
 
 def get_case(x):
@@ -411,7 +423,7 @@ def get_user_types():
 
 def edit_user(uid):
     q = query_db('SELECT * FROM users WHERE user_id = ?',
-                 [uid])
+                 [uid], one=True)
     return q
 
 
@@ -436,11 +448,11 @@ def deactivate_user(x):
 # ########################################################### #
 # #                      Registration                       # #
 # ########################################################### #
-def register_new_user(fname, lname, utype, email, pw, studid, card):
+def register_new_user(fname, lname, utype, email, pw, studid):
     q = insert_db('INSERT INTO users(card_number, student_id, first_name, last_name, student_mail, exams_taken,'
                   'exams_passed, exams_failed, practice_exams_done, isActive, userType, password)'
                   'VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
-                  [card, studid, fname, lname, email, 0, 0, 0, 0, 1, utype, pw])
+                  [0, studid, fname, lname, email, 0, 0, 0, 0, 1, utype, pw])
     if q is None:
         return False
     return q
@@ -453,8 +465,10 @@ def add_student_card(user, card):
 
 
 def add_student_card_with_studid(card, studid):
+    stu = int(studid)
+    nbr = str(card)
     _db('UPDATE users SET card_number = ? WHERE student_id = ?',
-        [card, studid])
+        [nbr, stu])
     return True
 
 
