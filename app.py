@@ -3,9 +3,10 @@
 import os
 from flask import Flask, render_template, url_for, redirect, request, session, Response, make_response, flash, \
     send_from_directory
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 import json
 import uuid
+import babel
 
 # Import from helper files
 from helpers.database import *
@@ -241,6 +242,7 @@ def results(result_id):
     questions = exam_get_questions(result[3])
 
     zipped = zip(questions, answers)
+    dated = convert_date(result[2])
 
     # Simplifies the grade for reading purpose.
     if result[9] is not 1:
@@ -249,7 +251,7 @@ def results(result_id):
         grade = 'BESTÅTT'
 
     session_reset()
-    return render_template('results.html', r=result, exam_info=info_to_student, p=zipped, grade=grade)
+    return render_template('results.html', r=result, exam_info=info_to_student, exam=exam_info[1], date=dated, p=zipped, grade=grade)
 
 
 # ########################################################### #
@@ -750,6 +752,13 @@ def selected_exam(exam, sensor):
     else:
         session['active_exam'] = insert
         return True
+
+
+def convert_date(date_time):
+    format = '%Y-%m-%d'  # The format
+    datetime_str = datetime.strptime(date_time, format)
+
+    return datetime_str
 
 
 # ########################################################### #

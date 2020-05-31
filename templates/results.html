@@ -5,63 +5,6 @@
 
 
 {% block styles %}
-.tr-top {
-    border-top-color: black;
-    border-top-style: solid;
-    border-top-width: 1px;
-    border-right-color: black;
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-left-color: black;
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
-}
-.tr-middle {
-    border-right-color: black;
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-left-color: black;
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
-}
-.tr-bottom {
-    border-right-color: black;
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-bottom-color: black;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-left-color: black;
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
-}
-
-.tg  {border-collapse:collapse;border-spacing:0;border:none;}
-.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;}
-.tg .tg-2fdn{border-color:#9b9b9b;text-align:left;vertical-align:top}
-.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
-.tg .tg-x2jv{font-size:26px;border-color:#000000;text-align:center;vertical-align:top}
-.tg .tg-73oq{border-color:#000000;text-align:left;vertical-align:top}
-.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-fymr{font-weight:bold;border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-dvpl{border-color:inherit;text-align:right;vertical-align:top}
-.tg .tg-p8sp{font-size:20px;border-color:inherit;text-align:center;vertical-align:top}
 {% endblock %}
 
 
@@ -86,198 +29,96 @@
     </p>
     <p>
     <b>Questions</b>
-        {% for a,i in p %}
-            {% if a[6] == 1 %}
-                <b>{{ a[3] }}:</b> {{ i }}
-                <br>
-            {% else %}
-                {{ a[3] }}:  {{ i }}
-                <br>
-            {% endif %}
-        {% endfor %}
+
     </p>
 <p>
     {{ r[3] }}
 </p>
 
 
-    <table class="tg" style="table-layout: fixed; width: 988px">
-<colgroup>
-<col style="width: 88px">
-<col style="width: 348px">
-<col style="width: 418px">
-<col style="width: 134px">
-</colgroup>
-  <tbody><tr>
-    <th class="tg-x2jv"></th>
-    <th class="tg-x2jv" colspan="2">Oppkobling TIVA-sett</th>
-    <th class="tg-73oq"></th>
-  </tr>
-  <tr>
-    <td class="tg-73oq"></td>
-    <td class="tg-73oq" colspan="2"></td>
-    <td class="tg-73oq"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">STUDENT:</td>
-    <td class="tg-0pky" colspan="2"></td>
-    <td class="tg-fymr">Start:</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-c3ow" colspan="2">Oppkobling TIVA-sett</td>
-    <td class="tg-fymr">Stopp:</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="4"></td>
-  </tr>
-  <tr>
-    <td class="tg-fymr" colspan="4">Informasjon til studenten:</td>
-  </tr>
-  <tr style="
-" class="tr-top">
-    <td class="tg-dvpl">•</td>
-    <td class="tg-0pky" colspan="3">Studenten skal blande ut medikamenter (propofol/remifentanil og koble opp</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="3">TIVA-sett og programmere pumpene i hht valgt medikament-protokoll</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-dvpl">•</td>
-    <td class="tg-0pky" colspan="3">Studenten skal kunne forklare grunnbegreper ved TIVA/TCI (Cp, Cpt, Ce og Cet)</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-dvpl">•</td>
-    <td class="tg-0pky" colspan="3">Tidsramme: 15 min</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-dvpl">•</td>
-    <td class="tg-2fdn" colspan="3">Korrekt arbeidsantrekk</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Finner fram nødvendig utstyr og medikamenter</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Blander og trekker opp medikamenter med aseptisk prosedyre</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kontrollerer koblinger på TIVA-sett og ivaretar aseptikk ved håndtering</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kobler til sprøyter og fyller slanger, fyller infusjonssett med infusjonsvæske uten</td>
-    <td class="tg-p8sp"></td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">deponering av medikament i infusjonsslange</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kan programmere pumper med propofol og remifentanil ut fra</td>
-    <td class="tg-p8sp"></td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">gitt pasientcase</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Ber om dobbeltkontroll på utblanding/programmering</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kan forklare forskjell på Cp, Cpt, Ce og Cet</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kan foreslå oppstartstarget for enten sedasjon eller innledning.</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kan forklare hva som kan gjenbrukes i et TIVA-sett/regler for gjenbruk av medikamenter</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-bottom">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Gjennomfører i løpet av 15 minutter</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-dvpl" colspan="2">Totalscore:</td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">For å få godkjent må studenten:</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">• Kan begrunne de uthevede punktene</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">• Oppnå godkjent i minimum 8 av 12 punkter</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">• Ha utført alle punkter</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">Kommentar ved ikke bestått:</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">Muntlig tilbakemelding (maks 5 minutter)</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">Bestått/Ikke bestått</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">Dato: ……………….</td>
-    <td class="tg-dvpl" colspan="2">Sensor:……………………………</td>
-  </tr>
-</tbody></table>
+    <div class="container-fluid">
+        <div class="card mt-2">
+            <div class="card-header">
+                <h1>
+                    Resultater
+                </h1>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-12">
+                    </div>
+                    <div class="col-6">
+                        <p>
+                            Navn: Fornavn Etternavn
+                        </p>
+                    </div>
+                    <div class="col-6">
+                        Dato: {{ date }}
+                    </div>
+                    <div class="col">
+                        Student id: {{ r[9] }}
+                    </div>
+                    <div class="col">
+                        Resultat id: {{ r[0] }}
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-xl">
+                        <h2 class="text-left">
+                            {{ exam }}
+                        </h2>
+                    </div>
+                    <div class="col">
+                        <h4 class="font-italic">
+                            {{ grade }}
+                        </h4>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-xl mb-0">
+                        <p class="mb-0">
+                            Oppgaver:
+                        </p>
+                        <ul class="list-group-flush">
+                            {% for a,i in p %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {% if a[6] == 1 %}
+                                        <b>{{ a[3] }}:</b>
+                                    {% else %}
+                                        {{ a[3] }}:
+                                    {% endif %}
+                                    <span class="badge badge-light badge-pill">
+                                        {{ i }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                Kommentar:
+                            </div>
+                            <div class="card-body">
+                                kommentar
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <b>
+                            Sensor: sensor
+                        </b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 
