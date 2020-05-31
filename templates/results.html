@@ -88,7 +88,7 @@
                                     {% else %}
                                         {{ a[3] }}:
                                     {% endif %}
-                                    <span class="badge badge-light badge-pill">
+                                    <span class="badge badge-{% if i == '1' %}success{% else %}danger{% endif %} badge-pill">
                                         {{ i }}
                                     </span>
                                 </li>
