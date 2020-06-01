@@ -37,15 +37,20 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <a href="{{ url_for("student_login") }}" class="btn btn-primary btn-lg" type="button">Logg inn</a>
+                                <a href="{{ url_for("user_login", opt=1) }}" class="btn btn-primary btn-lg" type="button">Logg inn</a>
                             </div>
                             <div class="col align-self-end">
-                                <a href="{{ url_for("register_new_student") }}" class="btn btn-link btn-sm" type="button">Registrer ny bruker</a>
+                                <a href="{{ url_for("register_new_student") }}" class="btn btn-link btn-sm text-secondary" type="button">Registrer ny bruker</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    <div class="row">
+        <div class="col">
+            <a href="{{ url_for('studid_fix_card', order=1) }}" class="text-secondary">Logg inn med student ID</a>
+        </div>
+    </div>
     </div>
 {% endblock %}

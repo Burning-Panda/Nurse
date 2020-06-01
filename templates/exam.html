@@ -14,9 +14,9 @@
 
 {% block content %}
 
-    <div class="container-fluid mb-5">
+    <div class="container-fluid mb-5 mt-5">
         <div class="row">
-            <div class="col">
+            <div class="col-11 m-auto">
                 <h2> {{ exam[1] }} </h2>
                 <p>
                     Når du starter testen; husk å snakke klart og tydelig. Del gjerne også tankeprosessen din underveis og forklar hvorfor du gjør det du gjør.
@@ -78,7 +78,7 @@
                         <a href="{{ url_for('choose_exam') }}" class="text-secondary">Avbryt</a>
                     </div>
                     <div class="col text-right">
-                        <a class="btn btn-primary" href="{{ url_for('tasks', exam=exam[0]) }}">
+                        <a class="btn btn-primary btn-lg" href="{{ url_for('tasks', exam=exam[0]) }}">
                             Start Test
                         </a>
                     </div>

@@ -54,9 +54,15 @@ def splash():
     if session.get('room'):
         session['room'] = 1
 
-    session['is_exam'] = 1
+    session['is_exam'] = 0
 
     return render_template("index.html", homepage=True)
+
+
+@app.route('/with/sensor/active')
+def with_sensor_function():
+    session['is_exam'] = 1
+    return redirect(url_for('user_login', opt=2))
 
 
 @app.route('/exams', methods=['GET'])
@@ -73,17 +79,21 @@ def choose_exam():
         return redirect(url_for('splash'))
     if session.get('sensor'):
         s = session['sensor']
+        sens_name = get_users_name(session['sensor'])
     else:
         s = 'None'
+        sens_name = ['', '']
 
     if session.get('student'):
         st = session['student']
+        stu_name = get_users_name(session['student'])
     else:
         st = 'None'
+        stu_name = ['', '']
 
     avb_tests = get_available_exams()
 
-    return render_template('exams.html', exams=avb_tests, sensor=s, student=st)
+    return render_template('exams.html', exams=avb_tests, sen_check=s, stu_check=st, sensor=sens_name, student=stu_name)
 
 
 @app.route('/exam/<int:exam_id>')
@@ -191,11 +201,8 @@ def tasks(exam):
         ins = insert_result(case_id, exam, answers, st_time, text_grade, ie, active_sensor, dump, student)
 
         obs_status_change(get_room, 'stop')
-        # if grade is 0:
-        #    redirect(url_for('comment', result_id=ins))
-        # else:
+
         return redirect(url_for('results', result_id=ins))
-        # return render_template('results.html', e=exam, q=e, data=answers, count=count, c=min_correct, i=ins)
 
     else:
         # Saves the time locally on the browser and renders the exam questions template.
@@ -244,10 +251,15 @@ def results(result_id):
     questions = exam_get_questions(result[3])
 
     zipped = zip(questions, answers)
+
+    # Concerts the date to the correct format, and can be used with the strftime function
     conv_dated = convert_date(result[2])
+    # Changes the format to what we want it to look like.
     dated = conv_dated.strftime("%d %b, %Y")
 
     time_used = result[7].split('.')
+
+    stud_info = get_student_info_from_card(result[8])
 
     # Simplifies the grade for reading purpose.
     if result[9] is not 1:
@@ -256,8 +268,9 @@ def results(result_id):
         grade = 'BESTÅTT'
 
     session_reset()
+
     return render_template('results.html', r=result, exam_info=info_to_student, exam=exam_info[1], date=dated, p=zipped,
-                           grade=grade, sensor=sensor, time=time_used[0], comment=comments)
+                           grade=grade, sensor=sensor, time=time_used[0], comment=comments, student=stud_info)
 
 
 # ########################################################### #
@@ -270,48 +283,47 @@ def results(result_id):
 """
 
 
-@app.route('/scan/sensor', methods=['GET', 'POST'])
-def sensor_login():
+@app.route('/scan/<int:opt>', methods=['GET', 'POST'])
+def user_login(opt):
+    """
+    :param opt: The option for what user we are looking for. Student 1 or teacher 2.
+    :return:
+    """
     if request.method == 'GET':
-        return render_template('loader.html')
+        return render_template('loader.html', option=opt)
 
     if request.method == 'POST':
         # waits for a card to be read by the scanner.
-        sensor = read()
-        while sensor is None:
+        reader = read()
+
+        while reader is None:
             # making sure a card is actually read.
             # If nothing is done
             pass
 
-        if sensor is False:
-            flash('You did not scan your card in time.')
+        if reader is False:
+            flash('Du skannet ikke kortet ditt i tide.')
             return Response("fail", status=406, mimetype='application/json')
 
-        session['sensor'] = sensor[0]
+        # makes sure the card exist in our database.
+        if card_exists_already(reader[0]) is False:
+            # flash('This card doesn\'t exists in our database, please register as a new user.')
+            flash('Dette kortet finnes ikke i vår database. Registrer deg som ny bruker')
+            return Response('fail', status=409, mimetype='application/json')
+
+        if opt is 2:
+            session['sensor'] = reader[0]
+        elif opt is 1:
+            session['student'] = reader[0]
+        else:
+            flash('Error, How did you even access this?')
+            return Response("fail", status=403, mimetype='application/json')
+
         # Afterwards, returns a message to the ajax script on the website, telling it to continue.
         flash('Your card was scanned successfully!')
         return Response("done", status=200, mimetype='application/json')
     else:
         return Response("fail", status=406, mimetype='application/json')
-
-
-@app.route('/scan/student', methods=['GET', 'POST'])
-def student_login():
-    if request.method == 'GET':
-        return render_template('loader.html')
-
-    if request.method == 'POST':
-        student = read()
-        while student is None:
-            pass
-
-        if student is False:
-            flash('You did not scan your card in time.')
-            return Response("fail", status=406, mimetype='application/json')
-
-        session['student'] = student
-        flash('Your card was scanned successfully!')
-        return Response("done", status=200, mimetype='application/json')
 
 
 # ########################################################### #
@@ -337,14 +349,21 @@ def register_new_student():
 
 @app.route('/register/card/<user>', methods=['GET', 'POST'])
 def register_new_student_card(user):
+    order = 2
     return render_template('card_fixer.html', type=order, aids=user)
 
 
 @app.route('/fix/<order>', methods=['GET', 'POST'])
-def studid_fix_card(order, user=None):
+def studid_fix_card(order):
     if request.method == 'POST':
         identity = request.form.get('studnbr')
-        return redirect(url_for('fixing', identity=identity, order=order))
+        if check_if_identity_exists(int(identity)) is True:
+            return identity
+            # return redirect(url_for('fixing', identity=identity, order=order))
+        else:
+            flash('That number does not exist in our database or already has a card, please register a new account.'
+                  '  If you think this is an error, contact the faculty.')
+            return redirect(url_for('studid_fix_card', order=order))
 
     else:
         return render_template('studid.html')
@@ -364,7 +383,12 @@ def do_the_fixing(order, aid):
 
         if card is False:
             flash('You did not scan your card in time.')
-            return Response("fail", status=406, mimetype='application/json')
+            return Response("fail", status=408, mimetype='application/json')
+
+        # makes sure the card doesn't already exist in our database.
+        if card_exists_already(card[0]) is True:
+            flash('This card already exists in our database')
+            return Response('fail', status=409, mimetype='application/json')
 
         if order is 1:
             add_student_card_with_studid(card[0], aid)
@@ -709,6 +733,12 @@ def admin_responses_single(rid):
 
     return render_template('admin/view-answers.html', r=result, exam_info=info_to_student, p=zipped, comment=comments,
                            date=dated, tu=time_used[0], sensor=sensor)
+
+
+@app.route('/remove/card/from/<user>')
+def admin_remove_card(user):
+    db_remove_card(user)
+    return Response("done", status=200, mimetype='application/json')
 
 
 @app.route('/login', methods=['GET', 'POST'])

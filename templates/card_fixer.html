@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Please scan your card</title>
-    <link rel="stylesheet" type="text/css" href="../static/loader.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='loader.css') }}">
 </head>
 <body>
 
@@ -35,9 +35,9 @@
     request.onload = function() {
         if (request.status === 200 && request.responseText === 'done') {
             // long process finished successfully, redirect user
-            window.location = '/exams';
-        } else if (request.status ===406 && request.responseText === 'fail') {
             window.location = '/';
+        } else if (request.status ===406 && request.responseText === 'fail') {
+            window.location = '{{ url_for('') }}';
         } else {
             // ops, we got an error from the server
             alert('ops, we got an error from the server.');

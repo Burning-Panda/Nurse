@@ -12,9 +12,8 @@
 
 
 {% block content %}
-    {{ r }}
-    <div class="container-fluid mb-5">
-        <div class="card mt-2">
+    <div class="container-fluid mb-5 mt-5">
+        <div class="card mt-5">
             <div class="card-header">
                 <div class="row">
                     <div class="col-9">
@@ -30,16 +29,16 @@
                 <div class="row">
 
                     <div class="col-6">
-                        Navn: Fornavn Etternavn
+                        <b>Navn:</b> {{ student[1] }} {{ student[2] }}
                     </div>
                     <div class="col-6 text-right">
-                        Dato: {{ date }}
+                        <b>Dato:</b> {{ date }}
                     </div>
                     <div class="col">
-                        Student id: {{ r[9] }}
+                        <b>Student id:</b> {{ student[0] }}
                     </div>
                     <div class="col text-right">
-                        Resultat id: {{ r[0] }}
+                        <b>Resultat id:</b> {{ r[0] }}
                     </div>
                 </div>
                 <div class="row mt-5">
@@ -92,12 +91,14 @@
                         </ul>
                     </div>
                 </div>
+            <hr class="mt-5">
                 {% if sensor != None %}
                     <div class="row mt-5">
                         <div class="col">
                             <b>Sensor:</b> {{ sensor[1] }} {{ sensor[2] }}
                         </div>
                     </div>
+                    <hr class="mt-5">
                 {% endif %}
 
                 <div class="row mt-5">
@@ -148,15 +149,6 @@
                     </div>
                     {% endif %}
                 </div>
-            {% if sensor != None %}
-                <div class="row mt-5 mb-2">
-                    <div class="col">
-                        <b>
-                            Sensor: {{ sensor }}
-                        </b>
-                    </div>
-                </div>
-            {% endif %}
             <p class="mt-3 mr-3 text-right"><a class="btn btn-secondary" href="/">Avslutt</a></p>
             </div>
         </div>

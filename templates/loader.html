@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Please scan your card</title>
-    <link rel="stylesheet" type="text/css" href="../static/loader.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='loader.css') }}">
 </head>
 <body>
 
-<h1>Please scan your card</h1>
+{% if option == 1 %}
+    <h1>Vennligst skann studentkortet ditt</h1>
+{% elif option == 2 %}
+    <h1>Vennligst skann ansattkortet ditt</h1>
+{% endif %}
 <h3></h3>
 
 <div class='loader loader1'>
@@ -26,14 +30,18 @@
 
 <script>
     const request = new XMLHttpRequest();
-    request.open('POST', '/scan/sensor');
+    request.open('POST', '{{ url_for('user_login', opt=option) }}');
 
     request.onload = function() {
         if (request.status === 200 && request.responseText === 'done') {
             // long process finished successfully, redirect user
             window.location = '/exams';
-        } else if (request.status ===406 && request.responseText === 'fail') {
+        } else if (request.status === 406 && request.responseText === 'fail') {
             window.location = '/';
+        } else if (request.status === 409 && request.responseText === 'fail') {
+            window.location = '{{ url_for('register_new_student') }}'
+        } else if (request.status === 403 && request.responseText === 'fail') {
+            window.location = '{{ url_for('splash') }}'
         } else {
             // ops, we got an error from the server
             alert('ops, we got an error from the server.');

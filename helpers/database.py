@@ -79,6 +79,22 @@ def sensor_exists(card):
 
 
 # ########################################################### #
+# #                      Students                           # #
+# ########################################################### #
+
+def get_student_info_from_card(card):
+    q = query_db('SELECT student_id, first_name, last_name FROM users WHERE card_number = ?',
+                 [card], one=True)
+    return q
+
+
+def get_users_name(card):
+    q = query_db('SELECT first_name, last_name FROM users WHERE card_number = ?',
+                 [card], one=True)
+    return q
+
+
+# ########################################################### #
 # #                         Exams                           # #
 # ########################################################### #
 
@@ -470,6 +486,24 @@ def add_student_card_with_studid(card, studid):
     _db('UPDATE users SET card_number = ? WHERE student_id = ?',
         [nbr, stu])
     return True
+
+
+def check_if_identity_exists(sid):
+    q = query_db('SELECT user_id, card_number, student_id FROM users WHERE student_id = ?',
+                 [sid], one=True)
+    if q and q[1] is 0:
+        return True
+    else:
+        return False
+
+
+def card_exists_already(card):
+    q = query_db('SELECT card_number FROM users WHERE card_number = ?',
+                 [card], one=True)
+    if q:
+        return True
+    else:
+        return False
 
 
 # ########################################################### #
