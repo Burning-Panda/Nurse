@@ -26,18 +26,14 @@
 
 <script>
     const request = new XMLHttpRequest();
-    {% if type == '1' %}
-        request.open('POST', '{{ url_for('do_the_fixing', order=type, aid=aids) }}');
-    {% elif type == '2' %}
-        request.open('POST', '{{ url_for('do_the_fixing', order=type , aid=aids) }}');
-    {% endif %}
+    request.open('POST', '{{ url_for('do_the_fixing', order=type, aid=aids) }}');
 
     request.onload = function() {
         if (request.status === 200 && request.responseText === 'done') {
             // long process finished successfully, redirect user
-            window.location = '/';
-        } else if (request.status ===406 && request.responseText === 'fail') {
-            window.location = '{{ url_for('') }}';
+            window.location = '{{ url_for('choose_exam') }}';
+        } else if (request.status === 403 && request.responseText === 'Forbidden' || request.status === 408 && request.responseText === 'Request Timeout' || request.status === 404 && request.responseText === 'Not Found') {
+            window.location = '{{ url_for("splash") }}'
         } else {
             // ops, we got an error from the server
             alert('ops, we got an error from the server.');

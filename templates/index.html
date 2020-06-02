@@ -14,19 +14,8 @@
 
 {% block content %}
 
-    <!--<div class="lang">
-        <h1>index</h1>
-    </div>
-    <div class="container">
-        <a href="/exams">continue</a>
-    </div>
-    <p>
-        <a href="/scan/sensor">Examen med Sensor</a>
-    </p>-->
-
-
     <div class="container" style="min-height: 100vh;">
-        <div class="row h-100" style="min-height: calc(100vh - 100px);">
+        <div class="row h-100" style="min-height: calc(100vh - 200px);">
             <div class="col-sm-12 my-auto">
                 <div class="card card-block text-center mx-auto">
                     <div class="card-header">
@@ -47,10 +36,10 @@
                 </div>
             </div>
         </div>
-    <div class="row">
-        <div class="col">
-            <a href="{{ url_for('studid_fix_card', order=1) }}" class="text-secondary">Logg inn med student ID</a>
+        <div class="row">
+            <div class="col">
+                <a href="{{ url_for('studid_fix_card', order=1) }}" class="text-secondary">Logg inn med student ID</a>
+            </div>
         </div>
-    </div>
     </div>
 {% endblock %}

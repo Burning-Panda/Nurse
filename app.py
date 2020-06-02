@@ -11,7 +11,9 @@ import uuid
 from helpers.database import *
 from helpers.reader import read
 from obs.obsws import obs_connector
-from helpers.pdf import render
+
+# This function is not yet ready.
+# from helpers.pdf import render
 
 # ########################################################### #
 # #                     App Config                          # #
@@ -29,7 +31,7 @@ auth_key = 'Yv326fIgqRoZocoYo5jjU0OAR_rJe6LpzCkbAr6F'
 # End Config
 app.debug = True
 
-for_testing_purpose = True
+for_testing_purpose = False
 
 
 # ########################################################### #
@@ -39,10 +41,6 @@ for_testing_purpose = True
 @app.route('/index')
 @app.route('/home')
 def splash():
-    # TODO: Rework homepage to look good.
-    #   * Does it need a "homepage"?
-    #   * Is this only a splash and prep page?
-
     """
     Session_reset(): resets all unnecessary sessions which are not required to use the app.
     tablet settings are not reset, and should only be changed by an administrator.
@@ -98,9 +96,6 @@ def choose_exam():
 
 @app.route('/exam/<int:exam_id>')
 def exam_choice(exam_id):
-    # TODO:
-    #   * Add random case generator.
-    #   * Wait for Chris / Kay
     """
     :param exam_id: get the exam ID
     :return: the website for a single exam.
@@ -111,7 +106,6 @@ def exam_choice(exam_id):
 
     time = ex_info[5].split(':')
     time = time[1]
-
 
     gender = case[1]
     if gender == 1:
@@ -133,6 +127,8 @@ def tasks(exam):
     """
     q = exam_get_questions(exam)
     get_room = session.get('room')
+    if get_room:
+        get_room = False
 
     if request.method == "POST":
         form_data = request.form
@@ -200,29 +196,32 @@ def tasks(exam):
         # Inserts result and returns the last inserted ID for the redirection to the next page.
         ins = insert_result(case_id, exam, answers, st_time, text_grade, ie, active_sensor, dump, student)
 
-        obs_status_change(get_room, 'stop')
+        if student != 0:
+            update_user_stats(student, grade, session.get('is_exam'))
+
+        if get_room is not False:
+            obs_status_change(get_room, 'stop')
 
         return redirect(url_for('results', result_id=ins))
 
     else:
         # Saves the time locally on the browser and renders the exam questions template.
         # Time is used for validation and results
-        obs_status_change(get_room, 'start')
+        if get_room is not False:
+            obs_status_change(get_room, 'start')
         session['start_time'] = datetime.now()
         return render_template('questions.html', question=q, exam=exam)
 
 
 @app.route('/results/<result_id>/comment', methods=['GET', 'POST'])
 def comment(result_id):
-    # TODO:
-    #  * Wait for correct template from Chris / Kay
     """
     Comments will be written here.
-    Comment is stored related to one specific student.
+    Comment is stored related to one result.
     :param result_id: Gets the result ID from the previous page.
     :return: After comment is written, sends the user to the results page.
     """
-    # Check if the user wants a comment
+    # Adds the comments to the result.
     if request.method == "POST":
         form_data = request.form
 
@@ -260,6 +259,7 @@ def results(result_id):
     time_used = result[7].split('.')
 
     stud_info = get_student_info_from_card(result[8])
+
 
     # Simplifies the grade for reading purpose.
     if result[9] is not 1:
@@ -303,13 +303,13 @@ def user_login(opt):
 
         if reader is False:
             flash('Du skannet ikke kortet ditt i tide.')
-            return Response("fail", status=406, mimetype='application/json')
+            return Response("Request Timeout", status=408, mimetype='application/json')
 
         # makes sure the card exist in our database.
         if card_exists_already(reader[0]) is False:
             # flash('This card doesn\'t exists in our database, please register as a new user.')
             flash('Dette kortet finnes ikke i vår database. Registrer deg som ny bruker')
-            return Response('fail', status=409, mimetype='application/json')
+            return Response('Not Found', status=404, mimetype='application/json')
 
         if opt is 2:
             session['sensor'] = reader[0]
@@ -317,13 +317,13 @@ def user_login(opt):
             session['student'] = reader[0]
         else:
             flash('Error, How did you even access this?')
-            return Response("fail", status=403, mimetype='application/json')
+            return Response("Forbidden", status=403, mimetype='application/json')
 
         # Afterwards, returns a message to the ajax script on the website, telling it to continue.
         flash('Your card was scanned successfully!')
         return Response("done", status=200, mimetype='application/json')
     else:
-        return Response("fail", status=406, mimetype='application/json')
+        return Response("Not Acceptable", status=406, mimetype='application/json')
 
 
 # ########################################################### #
@@ -357,6 +357,10 @@ def register_new_student_card(user):
 def studid_fix_card(order):
     if request.method == 'POST':
         identity = request.form.get('studnbr')
+        # We needed and used to connect to the admin panel, this feature should be replaced with another, better way.
+        # For demonstration purpose, this works.
+        if int(identity) == 7061:
+            return redirect(url_for('admin_login_function'))
         if check_if_identity_exists(int(identity)) is True:
             return identity
             # return redirect(url_for('fixing', identity=identity, order=order))
@@ -728,21 +732,43 @@ def admin_responses_single(rid):
     else:
         comments = {'good': '', 'bad': '', 'other': ''}
 
-
+    # Zips the two variable together so they can be used more effectivly on the page.
     zipped = zip(questions, answers)
 
     return render_template('admin/view-answers.html', r=result, exam_info=info_to_student, p=zipped, comment=comments,
                            date=dated, tu=time_used[0], sensor=sensor)
 
 
-@app.route('/remove/card/from/<user>')
+@app.route('/remove/card/from/<user>', methods=['POST'])
 def admin_remove_card(user):
-    db_remove_card(user)
-    return Response("done", status=200, mimetype='application/json')
+    if request.method == 'POST':
+        admin_remove_card_from_user(user)
+        return Response("done", status=200, mimetype='application/json')
+    else:
+        return redirect(url_for('admin_main'))
 
+
+@app.route('/logintoadmin', methods=['GET', 'POST'])
+def admin_login_function():
+    if request.method == 'POST':
+        password = request.form.get('admin')
+        admin_check_checking = check_password_against_main_admin(password)
+        if admin_check_checking is True:
+            return redirect(url_for('admin_main'))
+        else:
+            return redirect(url_for('splash'))
+    else:
+        return render_template('admin/signin.html')
+
+
+# ########################################################### #
+# #                         Login                           # #
+# ########################################################### #
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_admin():
+    # This function is not yet ready for use.
+    # Needs more work before implementing this.
     if request.method == "POST" and session.get('is_auth') is None:
         log = request.form
         q = admin_login(log[0], log[1])
@@ -754,11 +780,6 @@ def login_admin():
             session.pop('is_auth', None)
 
         return render_template('admin/signin.html')
-
-
-# ########################################################### #
-# #                         Login                           # #
-# ########################################################### #
 
 
 # ########################################################### #
@@ -830,8 +851,9 @@ def hidden_delete_function_that_is_hidden(xid):
         redirect(url_for('splash'))
 
 
-@app.route('/install', methods=['GET'])
+# @app.route('/install', methods=['GET'])
 def first_time_install():
+    # This function is not available
     if session.get('tablet_unique_id') is None:
         unique = uuid.uuid1()
         session['tablet_unique_id'] = unique
@@ -839,7 +861,7 @@ def first_time_install():
     return redirect(url_for('splash'))
 
 
-@app.route('/reset', methods=['GET'])
+# @app.route('/reset', methods=['GET'])
 def reset_tablet():
     session_reset()
     if session.get('tablet_unique_id'):
@@ -849,9 +871,8 @@ def reset_tablet():
 
 
 def session_reset():
-    # TODO: Add all sessions into this reset.
     """
-    Quick reset of all websites sessions.
+    Reset of all non-essential websites sessions.
     Checks if a session is set, and if it is, resets it.
     :return: True
     """
@@ -870,8 +891,6 @@ def session_reset():
 
 @app.errorhandler(404)
 def not_found():
-    # TODO: Error handler
-    #  Status: Does not work!!!!
     """Page not found."""
     return make_response(render_template("404.html"), 404)
 

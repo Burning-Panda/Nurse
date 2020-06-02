@@ -35,13 +35,11 @@
     request.onload = function() {
         if (request.status === 200 && request.responseText === 'done') {
             // long process finished successfully, redirect user
-            window.location = '/exams';
-        } else if (request.status === 406 && request.responseText === 'fail') {
-            window.location = '/';
-        } else if (request.status === 409 && request.responseText === 'fail') {
-            window.location = '{{ url_for('register_new_student') }}'
-        } else if (request.status === 403 && request.responseText === 'fail') {
-            window.location = '{{ url_for('splash') }}'
+            window.location = '{{ url_for("choose_exam") }}';
+        } else if (request.status === 403 && request.responseText === 'Forbidden' || request.status === 408 && request.responseText === 'Request Timeout') {
+            window.location = '{{ url_for("splash") }}'
+        } else if (request.status === 404 && request.responseText === 'Not Found') {
+            window.location = '{{ url_for("register_new_student") }}'
         } else {
             // ops, we got an error from the server
             alert('ops, we got an error from the server.');

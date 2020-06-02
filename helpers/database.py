@@ -3,11 +3,12 @@ import json
 from flask import g
 from datetime import datetime
 
-#  Databases connected to this project
+#  Databases connected to this project, can easily be switched for another or put in a different location.
 DATABASE = '/home/pi/nurse/db/nurse.db'
 
-
-# ANSWERSDB = '/db/answers.db'
+# This variable should be True.
+# This variable is for actually deleting items from the database.
+is_disabled = True
 
 # ########################################################### #
 # #                   Database connections                  # #
@@ -66,6 +67,8 @@ def get_single_sensor(s):
 def get_sensor_from_card(card):
     q = query_db('SELECT user_id, first_name, last_name FROM users WHERE card_number = ?',
                  [card], one=True)
+    if q is None:
+        q = ('-', 'Anonymisert', 'Bruker')
     return q
 
 
@@ -85,14 +88,38 @@ def sensor_exists(card):
 def get_student_info_from_card(card):
     q = query_db('SELECT student_id, first_name, last_name FROM users WHERE card_number = ?',
                  [card], one=True)
+    if q is None:
+        q = ('-', 'Anonymisert', 'Bruker')
     return q
 
 
 def get_users_name(card):
     q = query_db('SELECT first_name, last_name FROM users WHERE card_number = ?',
                  [card], one=True)
+    if q is None:
+        q = ('Anonymisert', 'Bruker')
     return q
 
+
+def update_user_stats(student, grade, is_exam):
+    q = query_db('SELECT exams_taken, exams_passed, exams_failed, practice_exams_done FROM users WHERE card_number =?',
+                 [student], one=True)
+    taken = int(q[0]) + 1
+    if grade is 1:
+        passed = int(q[1]) + 1
+        failed = int(q[2])
+    else:
+        passed = int(q[1])
+        failed = int(q[2]) + 1
+    if is_exam is 0:
+        practice = q[3] + 1
+    else:
+        practice = q[3]
+
+    _db('UPDATE users SET exams_taken = ?, exams_passed = ?, exams_failed = ?, practice_exams_done = ?'
+        ' WHERE card_number = ?',
+        [taken, passed, failed, practice, student])
+    return None
 
 # ########################################################### #
 # #                         Exams                           # #
@@ -207,6 +234,7 @@ def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor,
 def result_with_comment(comment, res_id):
     _db('UPDATE results SET comment = ? WHERE res_id = ?',
         [comment, res_id])
+    return None
 
 
 def get_case(x):
@@ -218,6 +246,10 @@ def get_case(x):
 # ########################################################### #
 # #                      active exams                       # #
 # ########################################################### #
+
+# Note: These functions are not active. They are here to be expanded upon.
+#       The following functions are made so an admin can check if romes are active or not.
+#       In addition, these functions can be linked to a light outside the rooms, so it checks if a room is occupied.
 
 def db_set_active_exam(e=None, r=None):
     if e is not None and r is not None:
@@ -454,11 +486,27 @@ def admin_update_user(fname, lname, utype, email, pw, studid, card):
 def activate_user(x):
     insert_db('UPDATE users SET isActive = 1 WHERE user_id = ?',
               [x])
+    return None
 
 
 def deactivate_user(x):
     insert_db('UPDATE users SET isActive = 0 WHERE user_id = ?',
               [x])
+    return None
+
+
+def admin_remove_card_from_user(u):
+    insert_db('UPDATE users SET card_number = 0 WHERE user_id = ?',
+              [u])
+    return None
+
+
+def check_password_against_main_admin(p):
+    q = query_db('SELECT password FROM users WHERE user_id = 1', one=True)
+    if str(q[0]) == str(p):
+        return True
+    else:
+        return False
 
 
 # ########################################################### #
@@ -527,11 +575,13 @@ def delete_from_active_tablets(unique):
 # #                       Exceptions                        # #
 # ########################################################### #
 
+# This function is only accessible if you have turned the variable on.
 def hidden_delete_function(x):
-    _db('DELETE FROM exams WHERE exam_id = ?',
-        [x])
-    _db('DELETE FROM examquestions WHERE examID = ?',
-        [x])
+    if is_disabled is False:
+        _db('DELETE FROM exams WHERE exam_id = ?',
+            [x])
+        _db('DELETE FROM examquestions WHERE examID = ?',
+            [x])
     return True
 
 

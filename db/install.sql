@@ -117,6 +117,9 @@ VALUES("testRoom",
        "MYSecurePassword"
 );
 
+INSERT INTO users(card_number, student_id, first_name, last_name, student_mail, exams_taken, exams_passed, exams_failed, practice_exams_done, isActive, userType, password)
+VALUES ('1', '1', 'Admin', 'Istrator', 'admin@admin.none', 0, 0, 0, 0, 1, 3, 'IGHAdmin6');
+
 INSERT INTO questiontype(qtype)
 VALUES('Forberedelse'),
       ('Gjennomføring'),

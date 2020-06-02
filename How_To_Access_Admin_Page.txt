@@ -1,0 +1,5 @@
+1. Trykk på logg in med student ID
+
+2. Skriv inn tallene:  7061
+
+3. Skriv inn passordet: IGHAdmin6
