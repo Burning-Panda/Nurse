@@ -3,20 +3,33 @@
 
 <head>
     <!-- Required meta tags -->
-    <link rel="manifest" href="{{ url_for('static', filename='webmanifest.json') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='web.webmanifest') }}">
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scaleable=no">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}?m=123">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}?m=123">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}?m=123">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}?m=123">
 
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#db4938">
+
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='640x1136.png') }}" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='750x1294.png') }}" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='1242x2148.png') }}" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='1125x2436.png') }}" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='1536x2048.png') }}" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='1668x2224.png') }}" media="(min-device-width: 834px) and (max-device-width: 834px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='2048x2732.png') }}" media="(min-device-width: 1024px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+
+
+    <script src='{{ url_for('static', filename='stay_standalone.js') }}' type="text/javascript"></script>
+
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.4.min.css') }}">
@@ -31,11 +44,11 @@
 <body>
 {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <ul class=flashes>
     {% for message in messages %}
-      <li>{{ message }}</li>
+        <div class="alert alert-success index-page-style" role="alert" style="">
+          {{ message }}
+        </div>
     {% endfor %}
-    </ul>
   {% endif %}
 {% endwith %}
 
@@ -44,15 +57,14 @@
 
 
     <script src='{{ url_for('static', filename='jquery.js') }}'></script>
-    <script src='{{ url_for('static', filename='stay_standalone.js') }}' type="text/javascript"></script>
+    <script src='{{ url_for('static', filename='bootstrap.4.js') }}'></script>
+
     <script type="text/javascript">{% block script %}{% endblock %}</script>
 
-
-    <link rel="stylesheet" href='{{ url_for('static', filename='style.css') }}' />
     <style type="text/css">
-        body {
-            font-size: 1.3rem;
-        }
-        {% block styles %}{% endblock %}</style>
+        body {font-size: 1.3rem;}
+        {% block styles %}{% endblock %}
+    </style>
+
 </body>
 </html>

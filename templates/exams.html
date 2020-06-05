@@ -15,39 +15,50 @@
 
 {% block content %}
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h4>Velg oppgave</h4>
+    <div class="row mt-5">
+        <div class="col">
+            {% if stu_check != 'None' %}
+                <h3 class="lead">Du er logget inn som: <b>{{ student[0] }} {{ student[1] }}</b></h3>
+            {% endif %}
+            {% if sen_check != 'None' %}
+                <p class="lead">Og har <b>{{ sensor[0] }} {{ sensor[1] }}</b> som sensor/veileder.</p>
+            {% endif %}
         </div>
-        <div class="col-12">
-            <p>velg en oppgave fra listen:</p>
+    </div>
+    <div class="row mt-5">
+        <div class="col-11">
+            <h4>Velg en passeringstest</h4>
         </div>
-        <div class="card-columns">
-            {% for exam in exams %}
+        <div class="col-1 text-right">
+            <a href="{{ url_for('splash') }}" class="text-secondary">Avbryt</a>
+        </div>
+    </div>
+    <div class="row mt-3">
+            {% for exam, time, questions in exams %}
+                <div class="col-6 mt-3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">
                         {{ exam[1] }}
                     </h5>
                     <p class="card-teks">
-                        Maks tid: {{ exam[5] }}
-                        Minimum antall riktig: {{ exam[8] }}
+                        Tidsramme: {{ time }}<br>
+                        Minimum poengsum: {{ exam[8] }} av {{ questions }}
                     </p>
                 </div>
-                <div class="card-footer">
-                    <a href="{{ url_for('exam_choice', exam_id=exam[0]) }}"
-                        class="btn btn-primary active float-right mb-2" role="button" aria-pressed="true">Velg</a>
+                <div class="card-footer text-right">
+                    <a href="{{ url_for('exam_choice', exam_id=exam[0]) }}" class="btn btn-primary active mb-2" role="button" aria-pressed="true">Velg</a>
                 </div>
             </div>
+                </div>
             {% endfor %}
+    </div>
+    <div class="row mt-5">
+        <div class="col">
+            {% if sen_check == 'None' %}
+                <a href="{{ url_for('with_sensor_function') }}" class="text-secondary">Legg til Sensor</a>
+            {% endif %}
         </div>
     </div>
 </div>
-
-    {% if sensor != 'None' %}
-        {{ sensor }}
-    {% endif %}
-    {% if student != 'None' %}
-        {{ student }}
-    {% endif %}
 {% endblock %}

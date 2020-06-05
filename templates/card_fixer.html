@@ -7,11 +7,7 @@
 </head>
 <body>
 
-{% if option == 1 %}
-    <h1>Vennligst skann studentkortet ditt</h1>
-{% elif option == 2 %}
-    <h1>Vennligst skann ansattkortet ditt</h1>
-{% endif %}
+<h1>Please scan your card</h1>
 <h3></h3>
 
 <div class='loader loader1'>
@@ -30,16 +26,14 @@
 
 <script>
     const request = new XMLHttpRequest();
-    request.open('POST', '{{ url_for('user_login', opt=option) }}');
+    request.open('POST', '{{ url_for('do_the_fixing', order=type, aid=aids) }}');
 
     request.onload = function() {
         if (request.status === 200 && request.responseText === 'done') {
             // long process finished successfully, redirect user
-            window.location = '{{ url_for("choose_exam") }}';
-        } else if (request.status === 403 && request.responseText === 'Forbidden' || request.status === 408 && request.responseText === 'Request Timeout') {
+            window.location = '{{ url_for('choose_exam') }}';
+        } else if (request.status === 403 && request.responseText === 'Forbidden' || request.status === 408 && request.responseText === 'Request Timeout' || request.status === 404 && request.responseText === 'Not Found') {
             window.location = '{{ url_for("splash") }}'
-        } else if (request.status === 404 && request.responseText === 'Not Found') {
-            window.location = '{{ url_for("register_new_student") }}'
         } else {
             // ops, we got an error from the server
             alert('ops, we got an error from the server.');

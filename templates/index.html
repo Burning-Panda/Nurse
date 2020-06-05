@@ -5,6 +5,11 @@
 
 
 {% block styles %}
+    .index-page-style {
+        position: absolute;
+        width: 100%;
+        top:0;
+    }
 {% endblock %}
 
 
@@ -14,19 +19,8 @@
 
 {% block content %}
 
-    <!--<div class="lang">
-        <h1>index</h1>
-    </div>
-    <div class="container">
-        <a href="/exams">continue</a>
-    </div>
-    <p>
-        <a href="/scan/sensor">Examen med Sensor</a>
-    </p>-->
-
-
     <div class="container" style="min-height: 100vh;">
-        <div class="row h-100" style="min-height: calc(100vh - 100px);">
+        <div class="row h-100" style="min-height: calc(100vh - 200px);">
             <div class="col-sm-12 my-auto">
                 <div class="card card-block text-center mx-auto">
                     <div class="card-header">
@@ -37,14 +31,19 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <a href="{{ url_for("student_login") }}" class="btn btn-primary btn-lg" type="button">Logg inn</a>
+                                <a href="{{ url_for("user_login", opt=1) }}" class="btn btn-primary btn-lg" type="button">Logg inn</a>
                             </div>
                             <div class="col align-self-end">
-                                <a href="{{ url_for("register_new_student") }}" class="btn btn-link btn-sm" type="button">Registrer ny bruker</a>
+                                <a href="{{ url_for("register_new_student") }}" class="btn btn-link btn-sm text-secondary" type="button">Registrer ny bruker</a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <a href="{{ url_for('studid_fix_card', order=1) }}" class="text-secondary">Logg inn med student ID</a>
             </div>
         </div>
     </div>

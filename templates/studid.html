@@ -21,6 +21,15 @@
                     <input type="number" class="form-control" id="studnbr" name="studnbr" aria-describedby="studnbrHelp" placeholder="Skriv in student nummeret ditt">
                     <small id="studnbrHelp" class="form-text text-muted">Student nummeret ditt er en rekke tall du kan finne på "Student ID" appen, eller på student kortet ditt under teksten "STUDENTNR"</small>
                   </div>
+
+                  {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-danger" role="alert">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
                   <button type="submit" class="btn btn-secondary float-right">Submit</button>
                 </form>
           </div>

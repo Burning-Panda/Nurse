@@ -1,67 +1,10 @@
 {% extends "global.html" %}
 {% block title %}
-    Result
+    Result {{ r[0] }}
 {% endblock %}
 
 
 {% block styles %}
-.tr-top {
-    border-top-color: black;
-    border-top-style: solid;
-    border-top-width: 1px;
-    border-right-color: black;
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-left-color: black;
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
-}
-.tr-middle {
-    border-right-color: black;
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-left-color: black;
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
-}
-.tr-bottom {
-    border-right-color: black;
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-bottom-color: black;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-left-color: black;
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
-}
-
-.tg  {border-collapse:collapse;border-spacing:0;border:none;}
-.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;}
-.tg .tg-2fdn{border-color:#9b9b9b;text-align:left;vertical-align:top}
-.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
-.tg .tg-x2jv{font-size:26px;border-color:#000000;text-align:center;vertical-align:top}
-.tg .tg-73oq{border-color:#000000;text-align:left;vertical-align:top}
-.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-fymr{font-weight:bold;border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-dvpl{border-color:inherit;text-align:right;vertical-align:top}
-.tg .tg-p8sp{font-size:20px;border-color:inherit;text-align:center;vertical-align:top}
 {% endblock %}
 
 
@@ -69,215 +12,163 @@
 
 
 {% block content %}
-    <a href="/">GO BACK</a>
-<div class="lang">
-    Result
-<h1>{{ r[9] }}</h1>
-{{ r }}<br>
-<h2>{{ grade }}</h2>
-</div>
-<div class="container">
+    <div class="container-fluid mb-5 mt-5">
+        <div class="row"><div class="col-11 m-auto">
+            <div class="card mt-5">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-9">
+                            <h1>
+                        Resultater
+                    </h1>
+                        </div>
+                        <div class="col-3"><p class="p-0 mt-2 mr-3 text-right"><a class="btn btn-secondary" href="/">Avslutt</a></p></div>
+                    </div>
+                </div>
+                <div class="card-body">
 
-    <p>
-    <b>Info to the stud</b>
-        {% for i in exam_info %}
-            {{ i }}<br>
-        {% endfor %}
-    </p>
-    <p>
-    <b>Questions</b>
-        {% for a,i in p %}
-            {% if a[6] == 1 %}
-                <b>{{ a[3] }}:</b> {{ i }}
-                <br>
-            {% else %}
-                {{ a[3] }}:  {{ i }}
-                <br>
-            {% endif %}
-        {% endfor %}
-    </p>
-<p>
-    {{ r[3] }}
-</p>
+                    <div class="row">
 
+                        <div class="col-6">
+                            <b>Navn:</b> {{ student[1] }} {{ student[2] }}
+                        </div>
+                        <div class="col-6 text-right">
+                            <b>Dato:</b> {{ date }}
+                        </div>
+                        <div class="col">
+                            <b>Student id:</b> {{ student[0] }}
+                        </div>
+                        <div class="col text-right">
+                            <b>Resultat id:</b> {{ r[0] }}
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-12 mt-5 mb-4">
+                            <h4 class="font-italic text-center">
+                                {{ grade }}
+                            </h4>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <h2 class="text-left">
+                                {{ exam }}
+                            </h2>
+                        </div>
+                    </div>
 
-    <table class="tg" style="table-layout: fixed; width: 988px">
-<colgroup>
-<col style="width: 88px">
-<col style="width: 348px">
-<col style="width: 418px">
-<col style="width: 134px">
-</colgroup>
-  <tbody><tr>
-    <th class="tg-x2jv"></th>
-    <th class="tg-x2jv" colspan="2">Oppkobling TIVA-sett</th>
-    <th class="tg-73oq"></th>
-  </tr>
-  <tr>
-    <td class="tg-73oq"></td>
-    <td class="tg-73oq" colspan="2"></td>
-    <td class="tg-73oq"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">STUDENT:</td>
-    <td class="tg-0pky" colspan="2"></td>
-    <td class="tg-fymr">Start:</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-c3ow" colspan="2">Oppkobling TIVA-sett</td>
-    <td class="tg-fymr">Stopp:</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="4"></td>
-  </tr>
-  <tr>
-    <td class="tg-fymr" colspan="4">Informasjon til studenten:</td>
-  </tr>
-  <tr style="
-" class="tr-top">
-    <td class="tg-dvpl">•</td>
-    <td class="tg-0pky" colspan="3">Studenten skal blande ut medikamenter (propofol/remifentanil og koble opp</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="3">TIVA-sett og programmere pumpene i hht valgt medikament-protokoll</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-dvpl">•</td>
-    <td class="tg-0pky" colspan="3">Studenten skal kunne forklare grunnbegreper ved TIVA/TCI (Cp, Cpt, Ce og Cet)</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-dvpl">•</td>
-    <td class="tg-0pky" colspan="3">Tidsramme: 15 min</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-dvpl">•</td>
-    <td class="tg-2fdn" colspan="3">Korrekt arbeidsantrekk</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Finner fram nødvendig utstyr og medikamenter</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Blander og trekker opp medikamenter med aseptisk prosedyre</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kontrollerer koblinger på TIVA-sett og ivaretar aseptikk ved håndtering</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kobler til sprøyter og fyller slanger, fyller infusjonssett med infusjonsvæske uten</td>
-    <td class="tg-p8sp"></td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">deponering av medikament i infusjonsslange</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kan programmere pumper med propofol og remifentanil ut fra</td>
-    <td class="tg-p8sp"></td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">gitt pasientcase</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Ber om dobbeltkontroll på utblanding/programmering</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kan forklare forskjell på Cp, Cpt, Ce og Cet</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kan foreslå oppstartstarget for enten sedasjon eller innledning.</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-middle">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Kan forklare hva som kan gjenbrukes i et TIVA-sett/regler for gjenbruk av medikamenter</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr class="tr-bottom">
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky" colspan="2">Gjennomfører i løpet av 15 minutter</td>
-    <td class="tg-p8sp">⃝</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-dvpl" colspan="2">Totalscore:</td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">For å få godkjent må studenten:</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">• Kan begrunne de uthevede punktene</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">• Oppnå godkjent i minimum 8 av 12 punkter</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">• Ha utført alle punkter</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">Kommentar ved ikke bestått:</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">Muntlig tilbakemelding (maks 5 minutter)</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">Bestått/Ikke bestått</td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-  </tr>
-  <tr>
-    <td class="tg-0pky" colspan="2">Dato: ……………….</td>
-    <td class="tg-dvpl" colspan="2">Sensor:……………………………</td>
-  </tr>
-</tbody></table>
+                    <p class="mt-3">
+                        <b>Informasjon til studenten</b>
+                    <ul>
+                    {% for i in exam_info %}
+                            <li>{{ i }}</li>
+                    {% endfor %}
+                    </ul>
+
+                    </p>
+
+                    <div class="row mt-5">
+                        <div class="col-xl mb-0">
+                            <h3 class="mb-1">
+                                Oppgaver:
+                            </h3>
+
+                                {% for a,i in p %}
+                                        <div class="row pt-4 pb-4 border-top">
+                                            <div class="col-10">
+                                                {% if a[6] == 1 %}
+                                                    <b>{{ a[3] }}:</b>
+                                                {% else %}
+                                                    {{ a[3] }}:
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-2 text-right">
+                                                {% if i == '1' %}
+                                                    <span class="badge badge-success badge-pill">&#10003;</span>
+                                                {% else %}
+                                                        <span class="badge badge-danger badge-pill">&Chi;</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                {% endfor %}
+
+                                <div class="border-top pt-4">
+                                    Tid brukt: {{ time }}
+                                </div>
+
+                        </div>
+                    </div>
+                <hr class="mt-5">
+                    {% if sensor != None %}
+                        <div class="row mt-5">
+                            <div class="col">
+                                <b>Sensor:</b> {{ sensor[1] }} {{ sensor[2] }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><b>Vurdering:</b> {{ grade }}
+                            {% if r[6] == 1 %}
+                                <p class="small text-secondary font-italic">Viktig: Dette er ikke en offisiell vurdering, og er bare for øving.<br>
+                                En sensor kan komme med en annen vurdering en det du ser her.
+                                </p>
+                            {% endif %}
+                            </div>
+                        </div>
+                        <hr class="mt-5">
+                    {% endif %}
+
+                    <div class="row mt-5">
+                        {% if r[10] != None %}
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    Kommentar:
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                        <h5>Ting som er gjort bra:</h5>
+                                            {% if comment['good'] %}
+                                                {{ comment['good'] }}
+                                            {% else %}
+                                                Ingen Kommentar
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-4 mb-4 pt-3 pb-3 border-bottom border-top">
+                                        <div class="col">
+                                        <h5>Ting som må forbedres:</h5>
+
+                                            {% if comment['bad'] %}
+                                                {{ comment['bad'] }}
+                                            {% else %}
+                                                Ingen Kommentar
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                        <h5>
+                                           Andre kommentarer:
+                                        </h5>
+                                        {% if comment['other'] %}
+                                                {{ comment['other'] }}
+                                            {% else %}
+                                                Ingen Kommentar
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                <p class="mt-3 mr-3 text-right"><a class="btn btn-secondary" href="/">Avslutt</a></p>
+                </div>
+            </div>
+        </div></div>
+    </div>
+
 
 </div>
 
