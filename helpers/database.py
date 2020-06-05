@@ -10,6 +10,7 @@ DATABASE = '/home/pi/nurse/db/nurse.db'
 # This variable is for actually deleting items from the database.
 is_disabled = True
 
+
 # ########################################################### #
 # #                   Database connections                  # #
 # ########################################################### #
@@ -78,18 +79,30 @@ def sensor_exists(card):
     if access_id is None:
         return 'No such user'
     else:
-        return access_id, 'exists in db', access_id['name']
+        name = '{} {}'.format(access_id[3], access_id[4])
+        return access_id, 'exists in db', name
 
 
 # ########################################################### #
 # #                      Students                           # #
 # ########################################################### #
-
-def get_student_info_from_card(card):
-    q = query_db('SELECT student_id, first_name, last_name FROM users WHERE card_number = ?',
+def get_student_nbr_from_card(card):
+    q = query_db('SELECT student_id FROM users WHERE card_number = ?',
                  [card], one=True)
+    if q is not None:
+        return q[0]
+    else:
+        return 0
+
+
+def get_student_info_from_card(studid):
+    q = query_db('SELECT student_id, first_name, last_name FROM users WHERE student_id = ?',
+                 [studid], one=True)
     if q is None:
-        q = ('-', 'Anonymisert', 'Bruker')
+        q = query_db('SELECT student_id, first_name, last_name FROM users WHERE card_number = ?',
+                     [studid], one=True)
+        if q is None:
+            q = ('-', 'Anonymisert', 'Bruker')
     return q
 
 
@@ -102,7 +115,7 @@ def get_users_name(card):
 
 
 def update_user_stats(student, grade, is_exam):
-    q = query_db('SELECT exams_taken, exams_passed, exams_failed, practice_exams_done FROM users WHERE card_number =?',
+    q = query_db('SELECT exams_taken, exams_passed, exams_failed, practice_exams_done FROM users WHERE card_number = ?',
                  [student], one=True)
     taken = int(q[0]) + 1
     if grade is 1:
@@ -121,6 +134,7 @@ def update_user_stats(student, grade, is_exam):
         [taken, passed, failed, practice, student])
     return None
 
+
 # ########################################################### #
 # #                         Exams                           # #
 # ########################################################### #
@@ -137,6 +151,12 @@ def get_exam_info(exam):
         return 'Sorry, that exam is not active or doesn\'t exists.'
     else:
         return exam_info
+
+
+def count_max_questions(exam):
+    q = query_db('SELECT count(question_id) FROM examquestions WHERE examID = ?',
+                 [exam])
+    return q[0]
 
 
 # ########################################################### #
@@ -220,7 +240,7 @@ def insert_result(case_id, exam_id, answers, start_time, grade, is_exam, sensor,
     se = str(sensor)
     stu = int(student)
 
-    comment = None
+    comment = '{"good": "", "bad": "", "other": ""}'
 
     con = insert_db('INSERT INTO results'
                     '(case_id, date_completed, exam_id, answers, sensor, is_exam, time_used, student, grade,'
@@ -274,8 +294,8 @@ def start_new_exam(exam_id, room):
         return 'Exam is ongoing in that room, give this to an admin to check if room is set correctly'
 
     time = datetime.now()
-    query_db('INSERT INTO active_exam (exam_id, start_time, room) VALUES (?)',
-             [exam_id, time, room, 1], one=True)
+    query_db('INSERT INTO active_exam (exam_id, start_time, room) VALUES (?, ?, ?)',
+             [exam_id, time, room], one=True)
     return True
 
 
@@ -326,6 +346,12 @@ def get_room_info(room_id):
 def delete_obs_room_db(room_id):
     _db('DELETE FROM rooms WHERE server_id = ?',
         [room_id])
+    return True
+
+
+def update_obs_room_info(id, name, ip, fwall, passw):
+    _db('UPDATE rooms SET roomName = ?, ip = ?, firewall = ?, password =? WHERE server_id = ?',
+        [name, ip, fwall, passw, id])
     return True
 
 
@@ -475,11 +501,10 @@ def edit_user(uid):
     return q
 
 
-def admin_update_user(fname, lname, utype, email, pw, studid, card):
-    _db('INSERT INTO users(card_number, student_id, first_name, last_name, student_mail, '
-        'userType, password)'
-        'VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
-        [card, studid, fname, lname, email, utype, pw])
+def admin_update_user(uid, fname, lname, utype, email, pw, studid):
+    _db('UPDATE users SET student_id = ?, first_name = ?, last_name = ?, student_mail = ?, userType = ?, password = ?'
+        ' WHERE user_id = ?',
+        [studid, fname, lname, email, utype, pw, uid])
     return None
 
 
@@ -505,6 +530,60 @@ def check_password_against_main_admin(p):
     q = query_db('SELECT password FROM users WHERE user_id = 1', one=True)
     if str(q[0]) == str(p):
         return True
+    else:
+        return False
+
+
+# ########################################################### #
+# #                     Tablet settings                     # #
+# ########################################################### #
+
+def update_room(room, uuid):
+    _db('UPDATE active_tablets SET active_room = ? WHERE uuid = ?',
+        [room, uuid])
+    return None
+
+
+def add_new_room(x):
+    insert_db('INSERT INTO active_tablets(uuid, date, is_active, active_room)'
+              'VALUES (?, date("now"), 1, 0)', [x])
+    return True
+
+
+def tablet_settings(uuid):
+    def uuid_check(x):
+        q = query_db('SELECT id FROM active_tablets WHERE uuid = ?',
+                     [x], one=True)
+        if q is not None:
+            return True
+        else:
+            return False
+
+    def has_active_room(x):
+        q = query_db('SELECT active_room FROM active_tablets WHERE uuid = ?',
+                     [x], one=True)
+        if q is None:
+            return False
+        return q
+
+    if uuid_check(uuid) is False:
+        add_new_room(uuid)
+
+    room = has_active_room(uuid)
+    if not room or room[0] == 0:
+        return False
+    return room[0]
+
+
+# ########################################################### #
+# #                         Users                           # #
+# ########################################################### #
+
+def get_user_info(id):
+    q = query_db('SELECT * FROM users WHERE user_id = ?',
+                 [id], one=True)
+    if q is not None:
+        return q
     else:
         return False
 
@@ -569,6 +648,12 @@ def delete_from_active_tablets(unique):
     insert_db('DELETE FROM active_tablets WHERE uuid = ?',
               [unique])
     return True
+
+
+def test_database(s):
+    insert_db('INSERT INTO testing(data) '
+              'VALUES(?)', [s])
+    return None
 
 
 # ########################################################### #

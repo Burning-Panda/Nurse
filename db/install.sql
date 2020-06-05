@@ -99,7 +99,10 @@ CREATE TABLE active_tablets(
     id integer PRIMARY KEY,
     uuid TEXT,
     date TEXT,
-    is_active integer
+    is_active integer,
+    active_room integer,
+    FOREIGN KEY (active_room)
+        REFERENCES rooms(server_id)
 );
 CREATE TABLE serverStatus(
     id integer PRIMARY KEY,
@@ -107,6 +110,11 @@ CREATE TABLE serverStatus(
     RAM text,
     DISKS text,
     NETWORK text
+);
+
+CREATE TABLE testing(
+    id integer PRIMARY KEY,
+    data text
 );
 
 INSERT INTO rooms(roomName, room, ip, firewall, password)

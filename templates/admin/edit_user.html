@@ -15,7 +15,7 @@
         <!-- end of row-->
 <form method="POST">
     <div class="row mb-4">
-        <div class="col-sm-12 col-md-12 col-lg-7 col-xl-6 mt-3">
+        <div class="col-sm-12 col-md-12 col-lg-9 col-xl-8 mt-3">
             <div class="card">
                 <div class="card-body">
                     <div class="card-title mb-2">Rediger Bruker</div>
@@ -43,7 +43,11 @@
 
 
                     <div id="new_user">
-                        <input type="hidden" name="pass" value="False">
+                        {% if u[11] == "1" %}
+                        <div id="studiddiv" class="form-group"><label for="studid">Student Nummer</label><input class="form-control" id="studid" name="studid" type="number" min='0' aria-describedby="studidHelp" placeholder="Student Nr" value="{{ u[2] }}" required><small class="form-text text-muted" id="studidHelp">Student nummeret er et sett med tall man kan se på student appen.</small></div>
+                        {% elif u[11] == "3" %}
+                        <div class="form-group" id='password'><label for="pass">Passord</label><input class="form-control" id="pass" name="pass" type="password" aria-describedby="passHelp" placeholder="Passord" value="{{ u[12] }}" required></div>
+                        {% endif %}
                     </div>
 
 
@@ -69,23 +73,26 @@
 <script src="{{ url_for('static', filename='admin/js/plugins/sweetalert2.min.js') }}"></script>
 <script>
     $(document).ready(function () {
+        let pass = "<div class=\"form-group\" id='password'>\n" +
+                        "<label for=\"pass\">Passord</label>\n" +
+                        "<input class=\"form-control\" id=\"pass\" name=\"pass\" type=\"password\" aria-describedby=\"passHelp\" placeholder=\"Passord\" value=\"{{ u[12] }}\" required>\n" +
+                        "</div>";
+        let stud_div = "<div id=\"studiddiv\" class=\"form-group\">\n" +
+                        "<label for=\"studid\">Student Nummer</label>\n" +
+                        "<input class=\"form-control\" id=\"studid\" name=\"studid\" type=\"number\" min='0' aria-describedby=\"studidHelp\" placeholder=\"Student Nr\" value=\"{{ u[2] }}\" required>\n" +
+                        "<small class=\"form-text text-muted\" id=\"studidHelp\">Student nummeret er et sett med tall man kan se på student appen.</small>\n" +
+                    "</div>";
             $("#usertype").on('change', function() {
                 let selector = $("#usertype option:selected").val()
                 if (selector === '3') {
-                    $("#new_user").prepend("<div class=\"form-group\" id='password'>\n" +
-                        "<label for=\"pass\">Passord</label>\n" +
-                        "<input class=\"form-control\" id=\"pass\" name=\"pass\" type=\"password\" aria-describedby=\"passHelp\" placeholder=\"Passord\" value=\"{{ u[12] }}\" required>\n" +
-                        "</div>");
+                    $("#studiddiv").remove()
+                    $("#new_user").prepend(pass);
                 } else if (selector === '2') {
                     $("#password").remove()
                     $("#studiddiv").remove()
                 } else {
                     $("#password").remove()
-                    $("#new_user").prepend("<div id='studiddiv' class=\"form-group\">\n" +
-                        "<label for=\"studid\">Student Nummer</label>\n" +
-                        "<input class=\"form-control\" id=\"studid\" name=\"studid\" type=\"number\" min='0' aria-describedby=\"studidHelp\" placeholder=\"Student Nr\" value=\"{{ u[2] }}\" required>\n" +
-                        "<small class=\"form-text text-muted\" id=\"studidHelp\">Student nummeret er et sett med tall man kan se på student appen.</small>\n" +
-                    "</div>")
+                    $("#new_user").prepend(stud_div)
                 }
             })
     })

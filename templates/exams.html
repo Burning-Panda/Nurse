@@ -34,7 +34,7 @@
         </div>
     </div>
     <div class="row mt-3">
-            {% for exam in exams %}
+            {% for exam, time, questions in exams %}
                 <div class="col-6 mt-3">
             <div class="card">
                 <div class="card-body">
@@ -42,8 +42,8 @@
                         {{ exam[1] }}
                     </h5>
                     <p class="card-teks">
-                        Tidsramme: {{ exam[5] }}<br>
-                        Minimum poengsum: {{ exam[8] }}
+                        Tidsramme: {{ time }}<br>
+                        Minimum poengsum: {{ exam[8] }} av {{ questions }}
                     </p>
                 </div>
                 <div class="card-footer text-right">

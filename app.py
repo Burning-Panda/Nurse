@@ -29,7 +29,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 auth_key = 'Yv326fIgqRoZocoYo5jjU0OAR_rJe6LpzCkbAr6F'
 
 # End Config
-app.debug = True
+app.debug = False
 
 for_testing_purpose = False
 
@@ -37,23 +37,41 @@ for_testing_purpose = False
 # ########################################################### #
 # #                    Main application                     # #
 # ########################################################### #
+@app.route('/test')
+def this_testing():
+    a = session.get('tablet_token')
+    return str(a)
+
+
 @app.route('/')
 @app.route('/index')
 @app.route('/home')
 def splash():
     """
-    Session_reset(): resets all unnecessary sessions which are not required to use the app.
-    tablet settings are not reset, and should only be changed by an administrator.
-    Its done this way so it can be scaled up to more rooms and still use the same system.
-    :return:
+        Session_reset(): resets all unnecessary sessions which are not required to use the app.
+        tablet settings are not reset, and should only be changed by an administrator.
+        Its done this way so it can be scaled up to more rooms and still use the same system.
+        :return:
     """
+    no_room_msg = 'Ingen rom er valgt, venligst gi denne padden til Hans Martin Lilleby'
+
+    if session.get('tablet_token') is None:
+        session['tablet_token'] = uuid.uuid4()
+
+    is_active = tablet_settings(str(session.get('tablet_token')))
+    if is_active is False:
+        flash(no_room_msg)
+    else:
+        session['room'] = is_active
+
+    if session.get('room') is None:
+        flash(no_room_msg)
 
     session_reset()
-    if session.get('room'):
-        session['room'] = 1
-
     session['is_exam'] = 0
 
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(days=365)
     return render_template("index.html", homepage=True)
 
 
@@ -75,6 +93,7 @@ def choose_exam():
     if session.get('room') is None:
         flash('Ingen rom er valgt, venligst gi denne padden til Hans Martin Lilleby')
         return redirect(url_for('splash'))
+
     if session.get('sensor'):
         s = session['sensor']
         sens_name = get_users_name(session['sensor'])
@@ -91,7 +110,20 @@ def choose_exam():
 
     avb_tests = get_available_exams()
 
-    return render_template('exams.html', exams=avb_tests, sen_check=s, stu_check=st, sensor=sens_name, student=stu_name)
+    time_c = []
+    for x in avb_tests:
+        conv = convert_time(x[5])
+        conv = conv.strftime('%M Minutter')
+        time_c.append(conv)
+
+    tot_question = []
+    for x in avb_tests:
+        i = count_max_questions(x[0])
+        tot_question.append(i[0])
+
+    zip_tests = zip(avb_tests, time_c, tot_question)
+
+    return render_template('exams.html', exams=zip_tests, sen_check=s, stu_check=st, sensor=sens_name, student=stu_name)
 
 
 @app.route('/exam/<int:exam_id>')
@@ -113,22 +145,23 @@ def exam_choice(exam_id):
     else:
         g = 'Kvinne'
 
+    count = count_max_questions(exam_id)
+
     splitter = ex_info[3].split('|')
     return render_template('exam.html', exam_id=exam_id, exam=ex_info, desc=splitter, case=case, gender=g,
-                           time=time)
+                           time=time, count=count[0])
 
 
-@app.route('/exam/<int:exam>/in-progress', methods=['POST', 'GET'])
-def tasks(exam):
+@app.route('/exam/<int:exam>/in-progress/<video>', methods=['POST', 'GET'])
+def tasks(exam, video):
     """
+    :param video:
     :param exam: gets the exam from the website link eg /exam/1/in-progress
     :return: returns a list of questions related to that exam.
     :return: On post, redirects the user to the results page.
     """
     q = exam_get_questions(exam)
     get_room = session.get('room')
-    if get_room:
-        get_room = False
 
     if request.method == "POST":
         form_data = request.form
@@ -157,7 +190,7 @@ def tasks(exam):
         if session.get('student') is None:
             student = 0
         else:
-            student = session.get('student')
+            student = get_student_nbr_from_card(session.get('student'))
 
         # gets the session data and stores it into a variable. Lessens chance of errors.
         case_id = session['case']
@@ -197,17 +230,17 @@ def tasks(exam):
         ins = insert_result(case_id, exam, answers, st_time, text_grade, ie, active_sensor, dump, student)
 
         if student != 0:
-            update_user_stats(student, grade, session.get('is_exam'))
+            update_user_stats(session.get('student'), grade, session.get('is_exam'))
 
-        if get_room is not False:
+        if video == 1:
             obs_status_change(get_room, 'stop')
 
-        return redirect(url_for('results', result_id=ins))
+        return redirect(url_for('comment', result_id=ins))
 
     else:
         # Saves the time locally on the browser and renders the exam questions template.
         # Time is used for validation and results
-        if get_room is not False:
+        if video == 1:
             obs_status_change(get_room, 'start')
         session['start_time'] = datetime.now()
         return render_template('questions.html', question=q, exam=exam)
@@ -256,10 +289,10 @@ def results(result_id):
     # Changes the format to what we want it to look like.
     dated = conv_dated.strftime("%d %b, %Y")
 
-    time_used = result[7].split('.')
+    time_conv = convert_time(result[7])
+    time_used = time_conv.strftime('%M Minutter og %S Sekunder')
 
     stud_info = get_student_info_from_card(result[8])
-
 
     # Simplifies the grade for reading purpose.
     if result[9] is not 1:
@@ -270,7 +303,7 @@ def results(result_id):
     session_reset()
 
     return render_template('results.html', r=result, exam_info=info_to_student, exam=exam_info[1], date=dated, p=zipped,
-                           grade=grade, sensor=sensor, time=time_used[0], comment=comments, student=stud_info)
+                           grade=grade, sensor=sensor, time=time_used, comment=comments, student=stud_info)
 
 
 # ########################################################### #
@@ -413,7 +446,7 @@ def do_the_fixing(order, aid):
 
 def obs_status_change(room_id, command):
     room = get_room_info(room_id)
-    ip = str(room[3])
+    ip = room[3]
     firewall = int(room[4])
     password = str(room[5])
     obs_connector(ip, firewall, password, command)
@@ -432,25 +465,25 @@ def admin_main():
     passed = count_passed_exams()
 
     # Adds all data into a single list before being sent to the index page.
-    websiteStrings = []
+    website_strings = [ax[0], l30d[0], l24d[0], passed[0]]
 
-    websiteStrings.append(ax[0])
-    websiteStrings.append(l30d[0])
-    websiteStrings.append(l24d[0])
-    websiteStrings.append(passed[0])
+    all_last30days = last_30_day_count_per_day()
 
-    countL30D = last_30_day_count_per_day()
-
-    return render_template('admin/index.html', ws=websiteStrings, last30days=countL30D)
+    return render_template('admin/index.html', ws=website_strings, last30days=all_last30days)
 
 
 @app.route("/tablet-config", methods=['GET', 'POST'])
 def tablet_config():
     if request.method == 'POST':
-        session['room'] = request.form.get('roomNbR')
+        r = request.form.get('roomNbR')
+        session['room'] = r
+        update_room(r, str(session.get('tablet_token')))
         flash('Aktiv Rom nummer er lagret!', 'success')
-        room_list = obs_rooms_available()
-        return render_template('admin/tablet-control.html', rooms=room_list)
+
+        session.permanent = True
+        app.permanent_session_lifetime = timedelta(days=365)
+
+        return redirect(url_for('tablet_config'))
     else:
         room_list = obs_rooms_available()
         return render_template('admin/tablet-control.html', rooms=room_list)
@@ -475,7 +508,8 @@ def obs_delete_room(room_id):
 def obs_add_new_room():
     if request.method == 'POST':
         name = request.form.get('validationName')
-        number = request.form.get('validationNumber')
+        number = 0
+
         ip = request.form.get('validationIP')
         wall = request.form.get('validationWall')
         pw = request.form.get('validationPassword')
@@ -485,6 +519,25 @@ def obs_add_new_room():
         return redirect(url_for('obs_room_control'))
     else:
         return redirect(url_for('obs_room_control'))
+
+
+@app.route("/obs_adding", methods=['POST'])
+def obs_add_new_room_t():
+    if request.method == 'POST':
+        data = request.get_json()
+
+        i = data['id']
+        nm = data['name']
+        ip = data['ip']
+        fwall = data['firewall']
+        passw = data['password']
+
+        update_obs_room_info(i, nm, ip, fwall, passw)
+        flash('Rom informasjon endret', 'success')
+
+        return Response("success", status=200, mimetype='application/json')
+    else:
+        return None
 
 
 @app.route("/admin/exams", methods=['GET', 'POST'])
@@ -510,54 +563,13 @@ def admin_exams_switch(eid, funct):
         return redirect(url_for('admin_exams'))
 
 
-@app.route("/admin/exams/new", methods=['GET', 'POST'])
-def admin_exams_new():
-    if request.method == 'POST':
-        data = request.form
-
-        # Exam Info
-
-        name = data['shortname']
-        outfit = data['outfit']
-        mincorr = data['min_correct']
-        time = "00:" + data['max_time'] + ":00"
-        desc = ""
-
-        description = find_replace_keys(data, "testdescription_")
-
-        for d in description:
-            if description[d]:
-                desc += str(description[d])
-                desc += "|"
-        desc = desc[:-1]
-
-        new_exam = admin_add_new_exam(name, desc, outfit, time, mincorr)
-
-        # Questions
-
-        # finds all that has the text "new_" in them
-        new_quest = find_replace_keys(data, "new_")
-        new_quest_imp = find_replace_keys(data, "i_ne_")
-
-        # if there are new questions, adds them to the database
-        if new_quest is not None:
-            for x in new_quest:
-                if new_quest[x]:
-                    add_new_questions(new_exam, new_quest[x], new_quest_imp[x])
-        flash_msg = f'Eksamen med navn: "{name}" er lagret'
-        flash(flash_msg, 'success')
-        return redirect(url_for('admin_exam_edit', ex_id=new_exam))
-
-    return render_template('admin/view-exam.html')
-
-
 @app.route("/admin/exams/new/post")
 def admin_exams_new_post():
     return redirect(url_for('admin_exams'))
 
 
-@app.route("/admin/exams/edit/<ex_id>", methods=['GET', 'POST'])
-def admin_exam_edit(ex_id):
+@app.route("/admin/exam/<ex_id>", methods=['GET', 'POST'])
+def admin_exam_edit(ex_id=None):
     if request.method == 'POST':
         data = request.form
 
@@ -578,19 +590,26 @@ def admin_exam_edit(ex_id):
                 desc += "|"
         desc = desc[:-1]  # This removes the last | from the string.
 
-        update_exam_info(name, desc, outfit, time, mincorr, ex_id)
+        if ex_id == "0":
+            update_exam_info(name, desc, outfit, time, mincorr, ex_id)
 
-        # Questions
+            # Questions
 
-        questions = find_replace_keys(data, "q_")
-        for e in questions:
-            update_questions_if_edited(str(e), questions[e])
+            questions = find_replace_keys(data, "q_")
+            for e in questions:
+                update_questions_if_edited(str(e), questions[e])
 
-        # finds and replaces anything that starts with the text "important_"
-        res = find_replace_keys(data, "important_")
-        # updates every question with the correct important status.
-        for e in res:
-            update_important_questions(str(e), res[e])
+            # finds and replaces anything that starts with the text "important_"
+            res = find_replace_keys(data, "important_")
+            # updates every question with the correct important status.
+            for e in res:
+                update_important_questions(str(e), res[e])
+
+            exam_identity = ex_id
+        else:
+            exam_identity = admin_add_new_exam(name, desc, outfit, time, mincorr)
+            flash_msg = f'Eksamen med navn: "{name}" er lagret'
+            flash(flash_msg, 'success')
 
         # finds all that has the text "new_" in them
         new_quest = find_replace_keys(data, "new_")
@@ -601,16 +620,19 @@ def admin_exam_edit(ex_id):
             for x in new_quest:
                 if new_quest[x]:
                     add_new_questions(ex_id, new_quest[x], new_quest_imp[x])
-        return redirect(url_for('admin_exam_edit', ex_id=ex_id))
+        return redirect(url_for('admin_exam_edit', ex_id=exam_identity))
         # return desc
 
-    exam = admin_get_exam_info(ex_id)
-    splitter = exam[3].split('|')
-    time = exam[5][3:-3]
+    if ex_id != "0":
+        exam = admin_get_exam_info(ex_id)
+        splitter = exam[3].split('|')
+        time = exam[5][3:-3]
 
-    questions = exam_get_questions(ex_id)
-    return render_template('admin/edit_exam.html', needs_hidden_field=True, exam=exam, info=splitter,
-                           questions=questions, time=time)
+        questions = exam_get_questions(ex_id)
+        return render_template('admin/edit_exam.html', exam=exam, info=splitter,
+                               questions=questions, time=time)
+    else:
+        return render_template('admin/view-exam.html')
 
 
 @app.route("/question/delete/<qid>", methods=['POST'])
@@ -630,6 +652,15 @@ def admin_users():
     return render_template('admin/users.html', usr=usr, tch=tch)
 
 
+@app.route("/admin/view/user/<id>")
+def admin_view_user(id):
+    u = get_user_info(id)
+    if u is False:
+        return None
+
+    return None
+
+
 @app.route("/admin/users/new", methods=['GET', 'POST'])
 def admin_new_users():
     if request.method == 'POST':
@@ -641,7 +672,6 @@ def admin_new_users():
 
         pw = 0
         studid = 0
-        card = 0
 
         if int(utype) is 1:
             studid = data['studid']
@@ -649,7 +679,7 @@ def admin_new_users():
         if int(utype) is 3:
             pw = data['pass']
 
-        register_new_user(fname, lname, utype, email, pw, studid, card)
+        register_new_user(fname, lname, utype, email, pw, studid)
         return redirect(url_for('admin_users'))
 
     utype = get_user_types()
@@ -660,6 +690,7 @@ def admin_new_users():
 def admin_user_edit(uid):
     if request.method == 'POST':
         data = request.form
+
         fname = data['fname']
         lname = data['lname']
         utype = data['usertype']
@@ -667,7 +698,6 @@ def admin_user_edit(uid):
 
         pw = 0
         studid = 0
-        card = 0
 
         if int(utype) is 1:
             studid = data['studid']
@@ -675,7 +705,8 @@ def admin_user_edit(uid):
         if int(utype) is 3:
             pw = data['pass']
 
-        admin_update_user(fname, lname, utype, email, pw, studid, card)
+        admin_update_user(uid, fname, lname, utype, email, pw, studid)
+
         return redirect(url_for('admin_users'))
     else:
         utype = get_user_types()
@@ -702,7 +733,14 @@ def admin_users_switch(eid, funct):
 @app.route("/admin/results")
 def admin_responses():
     r = get_all_results()
-    return render_template('admin/answers.html', results=r)
+    time_list = []
+    for x in r:
+        new_time = convert_time(x[3])
+        new_time = new_time.strftime("%M min og %S sekunder")
+        time_list.append(new_time)
+
+    l = zip(r, time_list)
+    return render_template('admin/answers.html', results=l)
 
 
 @app.route("/admin/results/view/<rid>")
@@ -732,7 +770,7 @@ def admin_responses_single(rid):
     else:
         comments = {'good': '', 'bad': '', 'other': ''}
 
-    # Zips the two variable together so they can be used more effectivly on the page.
+    # Zips the two variable together so they can be used more effectively on the page.
     zipped = zip(questions, answers)
 
     return render_template('admin/view-answers.html', r=result, exam_info=info_to_student, p=zipped, comment=comments,
@@ -820,6 +858,15 @@ def selected_exam(exam, sensor):
     else:
         session['active_exam'] = insert
         return True
+
+
+def convert_time(time):
+    if '.' in time:
+        format = '%H:%M:%S.%f'
+    else:
+        format = '%H:%M:%S'
+    datetime_str = datetime.strptime(time, format)
+    return datetime_str
 
 
 def convert_date(date_time):

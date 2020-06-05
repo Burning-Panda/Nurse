@@ -16,6 +16,13 @@
 
     <div class="container-fluid mb-5 mt-5">
         <div class="row">
+            <div class="col-11 m-auto text-right">
+                <a href="{{ url_for('choose_exam') }}" class="text-secondary">Avbryt</a>
+            </div>
+        </div>
+
+
+        <div class="row">
             <div class="col-11 m-auto">
                 <h2> {{ exam[1] }} </h2>
                 <p>
@@ -48,7 +55,7 @@
                         <div class="min_corr pt-1">
                             <b>For å få godkjent må studenten:</b><br>
                             Ha utført alle elementer med uthevet skrift.<br>
-                            Oppnå minimum: {{ exam[8] }} poeng.
+                            Oppnå minimum: {{ exam[8] }} poeng av {{ count }}.
                         </div>
 
                         <p class="mt-5">
@@ -69,20 +76,22 @@
                             eksaminator/makker.
                         </p>
                         <p>
-                            Når Padden er returnert kan eksamintor/makker trykke på "Start Test" og opptaket vil begynne.
+                            Når Padden er returnert kan eksaminator/makker trykke på "Start Test" og opptaket vil begynne.
                         </p>
                     </div>
                 </div>
+
                 <div class="row mt-4">
                     <div class="col text-left">
-                        <a href="{{ url_for('choose_exam') }}" class="text-secondary">Avbryt</a>
+                        <a href="{{ url_for('tasks', exam=exam[0], video=0) }}" class="text-secondary">Uten filming</a>
                     </div>
                     <div class="col text-right">
-                        <a class="btn btn-primary btn-lg" href="{{ url_for('tasks', exam=exam[0]) }}">
+                        <a class="btn btn-primary btn-lg" href="{{ url_for('tasks', exam=exam[0], video=1) }}">
                             Start Test
                         </a>
                     </div>
-                    </div>
+                </div>
+
             </div>
         </div>
     </div>

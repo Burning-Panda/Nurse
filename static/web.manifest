@@ -1,6 +1,10 @@
 {
   "name": "KoLaborate",
   "short_name": "KoLab",
+  "version": "0.0.0.1",
+  "manifest_version": 2,
+  "default_locale": "no-NO",
+  "author": "André Tørlen Lønvik, Christian Ringlund, Kay André Smådal",
   "start_url": "index",
   "display": "standalone",
   "background_color": "#fdfdfd",
@@ -47,5 +51,10 @@
       "src": "/static/favicon-512x512.png",
       "type": "image/png", "sizes": "512x512"
     }
+  ],
+  "permissions": [
+      "unlimitedStorage",
+      "notifications",
+      "fullscreen"
   ]
 }

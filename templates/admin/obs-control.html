@@ -24,14 +24,9 @@
                         <form method="POST" id="add_new_obs" action="{{ url_for('obs_add_new_room') }}">
                             <fieldset>
                                 <div class="form-row">
-                                    <div class="col-md-9 mb-3">
+                                    <div class="col-md-12 mb-3">
                                         <label for="validationName">Navn på rom</label>
                                         <input class="form-control" id="validationName" name="validationName" type="text" placeholder="Room name" value="" required>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <label for="validationNumber">room</label>
-                                        <input class="form-control" id="validationNumber" name="validationNumber" type="number" placeholder="1" value="" required>
-
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -42,7 +37,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <label for="validationWall">Open Firewall</label>
+                                        <label for="validationWall">Firewall port</label>
                                         <input class="form-control" id="validationWall" name="validationWall" type="number" placeholder="4444" value="" required>
                                     </div>
                                 </div>
@@ -83,7 +78,7 @@
                                         <td>{{ room[4] }}</td>
                                         <td>{{ room[5] }}</td>
                                         <td>
-                                            <a class="text-success mr-4" href="#"><i class="nav-icon i-Pen-2 font-weight-bold"></i> Edit</a>
+                                            <a class="text-success mr-4" onclick="edit({{ room[0] }},'{{ room[1] }}','{{ room[3] }}','{{ room[4] }}', '{{ room[5] }}',)"><i class="nav-icon i-Pen-2 font-weight-bold"></i> Edit</a>
                                             <a class="text-danger cursor-pointer" onclick="delete_room({{ room[0] }})"><i class="nav-icon i-Close-Window font-weight-bold"></i> DELETE</a>
                                         </td>
                                     </tr>
@@ -112,8 +107,8 @@
           cancelButtonColor: '#FF586B',
           confirmButtonText: 'Ja, slett den!',
           cancelButtonText: 'Nei, Avbryt!',
-          confirmButtonClass: 'btn btn-success mr-5',
-          cancelButtonClass: 'btn btn-danger',
+          cancelButtonClass: 'btn btn-success ',
+          confirmButtonClass: 'btn btn-danger mr-5',
           buttonsStyling: false
         }).then(function () {
             $.post('/obs/delete/'+id);
@@ -122,6 +117,69 @@
           elem.parentNode.removeChild(elem)
         })
         }
+    </script>
+
+    <script>
+    function edit(id, Navn, IP, Firewall, Password) {
+        swal({
+            title: 'Redigerer: ' + Navn,
+            html:
+                '<label for="swal-navn" class="mt-3">Navn på rommet</label>' +
+                '<input id="swal-navn" class="swal2-input" value="' + Navn + '">' +
+                '<label for="swal-ip">IP addresse på PC-en</label>' +
+                '<input id="swal-ip" class="swal2-input" value="' + IP + '">' +
+                '<label for="swal-firewall">Firewall på PC-en</label>' +
+                '<input id="swal-firewall" class="swal2-input" value="' + Firewall + '">' +
+                '<label for="swal-password">Passordet på PC-en</label>' +
+                '<input id="swal-password" class="swal2-input" value="' + Password + '">',
+            showCancelButton: true,
+            confirmButtonColor: '#0CC27E',
+            cancelButtonColor: '#FF586B',
+            confirmButtonText: 'Lagre!',
+            cancelButtonText: 'Avbryt!',
+            confirmButtonClass: 'btn btn-lg btn-success mr-5',
+            cancelButtonClass: 'btn btn-lg btn-danger',
+            buttonsStyling: false,
+
+            preConfirm: function () {
+                return new Promise(function (resolve) {
+                    resolve([
+                        $('#swal-navn').val(),
+                        $('#swal-ip').val(),
+                        $('#swal-firewall').val(),
+                        $('#swal-password').val()
+                    ])
+                })
+            },
+            onOpen: function () {
+                $('#swal-navn').focus()
+            }
+        }).then(function (result) {
+            let data = {
+                "id": id,
+                "name": result[0],
+                "ip": result[1],
+                "firewall": result[2],
+                "password": result[3]
+            };
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json',
+                url: '{{ url_for("obs_add_new_room_t") }}',
+                dataType : 'json',
+                data : JSON.stringify(data),
+                success : function(result) {
+
+                },error : function(result){
+                    console.log(result);
+                }
+            });
+
+        }).then(function () {
+            window.location = "{{ url_for('obs_room_control') }}"
+            }
+        ).catch(swal.noop)
+    }
     </script>
 {% endblock %}
 {% block styles %}
