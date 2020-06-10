@@ -159,6 +159,12 @@ def count_max_questions(exam):
     return q[0]
 
 
+def get_exam_short_info(exam):
+    q = query_db('SELECT shortname, testdescription FROM exams WHERE exam_id = ?',
+                 [exam], one=True)
+    return q
+
+
 # ########################################################### #
 # #                      Questions                          # #
 # ########################################################### #
@@ -384,7 +390,7 @@ def count_last_24_hours():
 
 
 def count_passed_exams():
-    count = query_db('SELECT count(*) FROM results WHERE is_exam = 1 AND grade = 1')
+    count = query_db('SELECT count(*) FROM results WHERE grade = 1')
     return count[0]
 
 

@@ -161,6 +161,7 @@ def tasks(exam, video):
     :return: On post, redirects the user to the results page.
     """
     q = exam_get_questions(exam)
+    exam_basic_info = get_exam_short_info(exam)
     get_room = session.get('room')
 
     if request.method == "POST":
@@ -243,7 +244,7 @@ def tasks(exam, video):
         if video == 1:
             obs_status_change(get_room, 'start')
         session['start_time'] = datetime.now()
-        return render_template('questions.html', question=q, exam=exam)
+        return render_template('questions.html', question=q, exam=exam_basic_info)
 
 
 @app.route('/results/<result_id>/comment', methods=['GET', 'POST'])

@@ -12,50 +12,79 @@
 
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <form method="POST" id="examQuestions">
+<div class="container pt-5 pb-5">
+    <form method="POST" id="examQuestions" class="mb-5">
         <fieldset>
-            <legend>Select exam name</legend>
+            <legend>{{ exam[0] }}</legend>
+            <p>Trykk på spørsmålsteksten for informasjon om spørsmålet.</p>
+        {% if exam[1] != None %}
+            <p>{{ exam[1] }}</p>
+        {% endif %}
 
-            <div class="row mb-3">
-                {% for q in question %}
-                    <div class="col-md-9 offset-md-1">
-                        {% if q[6] == 1 %}
-                            <b>{{ q[3] }}</b>
-                        {% else %}
-                            {{ q[3] }}
-                        {% endif %}
+
+            {% for q in question %}
+                <div class="mt-1 pt-4 pb-1 border-bottom">
+                    <div class="row mt-5">
+                        <div class="col-md-8">
+                            <a class="text-dark" data-toggle="collapse" href="#desc_{{ q[1] }}_q_{{ q[0] }}" role="button" aria-expanded="false" aria-controls="desc_{{ q[1] }}_q_{{ q[0] }}">
+                                {% if q[6] == 1 %}
+                                    <b>{{ q[3] }}</b>
+                                {% else %}
+                                    {{ q[3] }}
+                                {% endif %}
+                            </a>
+                        </div>
+
+                        <div class="col-md-3 offset-1 text-right">
+                            <div class="row">
+                                <div class="col-9">
+                                    <label for="exam_{{ q[1] }}_q_{{ q[0] }}_a_1">Gjennomført?</label>
+                                </div>
+                                <div class="col-3">
+                                    <input type="checkbox"
+                                           name="{{ q[0] }}"
+                                           id="exam_{{ q[1] }}_q_{{ q[0] }}_a_1"
+                                           class="checkbox"
+                                           value="1"
+                                           style="width: 2rem;height: 2rem;"/>
+                                    <input type="hidden"
+                                           name="{{ q[0] }}"
+                                           value="0" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <input type="checkbox"
-                               name="{{ q[0] }}"
-                               id="exam_{{ q[1] }}_q_{{ q[0] }}_a_1"
-                               class="checkbox"
-                               value="1"
-                               style="width: 2rem;height: 2rem;"/>
-                        <input type="hidden"
-                               name="{{ q[0] }}"
-                               value="0" />
+                    <div class="row">
+                        <div class="col">
+                            <div class="collapse multi-collapse" id="desc_{{ q[1] }}_q_{{ q[0] }}">
+                                <div class="card card-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            GIF / Video / Bilde
+                                        </div>
+                                        <div class="col-6">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
 
 
         </fieldset>
 
-        <div class="row">
-            <div class="col mt-3">
-                <p>Avslutt opptak og fortsett til neste side for å kunne skrive in en kommentar.</p>
+        <div class="row mt-5">
+            <div class="col-7 mt-3">
+                <p class="text-secondary">Avslutt opptak og fortsett til neste side for å kunne skrive in en kommentar.</p>
+            </div>
+            <div class="col-4 offset-1">
+                <input class="mt-4 mb-5 float-right btn btn-secondary" type="submit" value="Avslutt opptak">
             </div>
         </div>
 
-        <input class="mt-4 float-right btn btn-secondary" type="submit" value="Avslutt opptak">
     </form>
 </div>
 {% endblock %}
-
-
-<div class="container-fluid">
-    <h1> -- exam navn -- </h1>
-
-</div>

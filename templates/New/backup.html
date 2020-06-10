@@ -1,0 +1,42 @@
+
+
+{# Original spørsmåls liste #}
+<div class="container-fluid">
+    <h1> -- exam navn -- </h1>
+
+</div>
+
+
+
+    <div class="row mb-3">
+        <div class="col-md-9 offset-md-1">
+
+        </div>
+        <div class="col-md-2">
+
+        </div>
+    </div>
+
+
+{% for q in question %}
+    <div class="row mb-3">
+        <div class="col-md-9 offset-md-1">
+            {% if q[6] == 1 %}
+                <b>{{ q[3] }}</b>
+            {% else %}
+                {{ q[3] }}
+            {% endif %}
+        </div>
+        <div class="col-md-2">
+            <input type="checkbox"
+                   name="{{ q[0] }}"
+                   id="exam_{{ q[1] }}_q_{{ q[0] }}_a_1"
+                   class="checkbox"
+                   value="1"
+                   style="width: 2rem;height: 2rem;"/>
+            <input type="hidden"
+                   name="{{ q[0] }}"
+                   value="0" />
+        </div>
+    </div>
+{% endfor %}
