@@ -1,3 +1,6 @@
+# ARCHIVED
+This project is not worked on and should be rewritten if you want to build upon this.
+
 # Bachelor for the Department of Health Sciences in Gjøvik
 
 To what extent can a camera system help increase the skills of the students by opening up collaborative learning for the Nurse Education at NTNU Gjøvik, and can this system be used as a basis for giving assessment in the subject? And how can it help sensors grade students?
